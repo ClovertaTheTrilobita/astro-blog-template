@@ -24,6 +24,8 @@ const transitionKey = (id: string, part: string) => `content-${createHash('sha25
 export const articleTransition = (post: Article, part: 'title' | 'image') => transitionKey(`${post.collection}/${post.id}`, part);
 export const columnTransition = (lang: Lang, id: string, part: 'title' | 'image') => transitionKey(`column/${lang}/${id}`, part);
 export interface Column { id: string; title: string; description: string; image: string; }
+// Call with the column's published posts, already sorted newest first by articles().
+export const columnCover = (column: Column, posts: readonly Article[]) => posts[0]?.data.image?.url || column.image;
 const definitions = import.meta.glob<{ default: Column }>('../content/*/columns/*/index.ts', { eager: true });
 export function columns(lang: Lang): Column[] {
  return Object.entries(definitions).filter(([path]) => path.includes(`/content/${lang}/`)).map(([, module]) => module.default);
