@@ -24,7 +24,7 @@
 - Easy to use, with automatic deployment via GitHub Actions
 - <del><i>Astro Is All You Need</i></del>
 
-For more previews, please see: <b>[Images.md](docs/Images.md)</b>.
+For more previews, please see: <b>[My Blog](https://blog.cloverta.top/)</b>.
 
 ## 🧳 Usage
 
