@@ -1,4 +1,7 @@
 export default {
+  imagePreview: 'Image preview', previewImage: 'Enlarge image', closePreview: 'Close image preview',
+  downloadImage: 'Download image', downloadingImage: 'Downloading…',
+  downloadImageFailed: 'Unable to download. Click the download icon again to open the original image and save it.', imageLoadFailed: 'Unable to load this image. Try the download icon.',
   siteTitle: 'Half Price! The Ben-to Club!', backgroundTitle: 'HP BEN-TO', backgroundText: 'Half Price',
   nav: { home: 'Home', about: 'About', series: 'Series', archive: 'Archive', tags: 'Tags', friends: 'Friends' },
   latest: 'Latest posts', columnUpdates: 'Series updates', latestUpdates: 'Latest updates', recentComments: 'Recent comments',
