@@ -26,7 +26,7 @@
 - 操作简易，Github Action自动部署
 -  <del><i>Astro Is All You Need</i></del>
 
-更多预览请移步：<b>[Images.md](docs/Images.md)</b>。
+更多预览请移步：<b>[我的博客](https://blog.cloverta.top/)</b>。
 
 ## 🧳 使用
 
