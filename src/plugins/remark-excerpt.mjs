@@ -13,10 +13,12 @@ export default function remarkExcerpt() {
       else for (const child of node.children || []) visit(child);
     };
     visit(tree);
-    const text = paragraphs.join(' ').replace(/\s+/g, ' ').trim();
+    const text = paragraphs.map(paragraph => paragraph.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n');
     const characters = Array.from(text);
-    file.data.astro.frontmatter.bodyExcerpt = characters.length > 400
+    const excerpt = characters.length > 400
       ? `${characters.slice(0, 400).join('').trimEnd()}…`
       : text;
+    file.data.astro.frontmatter.bodyExcerpt = excerpt.replace(/\s+/g, ' ');
+    file.data.astro.frontmatter.bodyExcerptParagraphs = excerpt.split('\n');
   };
 }

@@ -187,6 +187,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .post-card-compact h3 { font-size: 18px; color: var(--ink); margin-bottom: 10px; }
 .post-card-compact h3 > a { color: inherit; font-weight: 700; }
 .post-card-compact .post-description { font-size: 15px; line-height: 1.65; margin-bottom: 10px; }
+.post-card-compact .post-description > p { margin: 0; }
 .post-card-compact .post-image-link { margin: 3px 47px 10px 30px; }
 .post-card-compact .post-thumbnail { width: 118px; height: 118px; }
 .read-post { margin-left: .8em; white-space: nowrap; font-size: 13px; }
