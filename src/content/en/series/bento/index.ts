@@ -1,1 +1,1 @@
-export default {"id": "bento", "title": "Bento & onigiri! Convenience store notes", "description": "Small meals, small discoveries.", "image": "/images/bento.svg"};
+export default { "id": "bento", "title": "Bento & onigiri! Convenience store notes", "description": "Earlier, I was scrolling through social media in front of the freezer section at Lawson, but I couldn’t really find any recommendations for prepared foods… So I decided to do my own review!", "image": "/images/bento.svg" };
