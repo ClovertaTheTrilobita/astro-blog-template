@@ -9,7 +9,7 @@ const article = z.object({
 });
 export const collections = {
   posts: defineCollection({ loader: glob({ pattern: '*/posts/**/*.md', base: './src/content' }), schema: article }),
-  columnPosts: defineCollection({ loader: glob({ pattern: '*/columns/**/*.md', base: './src/content' }), schema: article.omit({ description: true }) }),
+  seriesPosts: defineCollection({ loader: glob({ pattern: '*/series/**/*.md', base: './src/content' }), schema: article.omit({ description: true }) }),
   pages: defineCollection({ loader: glob({ pattern: '*/pages/*.md', base: './src/content' }), schema: z.object({ title: z.string() }) }),
   friends: defineCollection({ loader: glob({ pattern: '*/friends/*.md', base: './src/content' }), schema: z.object({
     name: z.string(), description: z.string(), url: z.url(), avatar: z.string(),

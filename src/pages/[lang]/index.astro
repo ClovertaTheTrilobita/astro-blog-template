@@ -10,11 +10,11 @@ export const getStaticPaths = languagePaths;
 const { lang } = Astro.params as { lang: 'zh' | 'en' };
 const t = getTranslations(lang);
 const posts = (await articles(lang)).slice(0, 4);
-const entries = await articles(lang, 'columnPosts');
+const entries = await articles(lang, 'seriesPosts');
 const latestColumns = columns(lang).map(column => ({ ...column, posts: entries.filter(post => columnId(post) === column.id) })).filter(column => column.posts.length).sort((a,b) => b.posts[0].data.pubDate.valueOf() - a.posts[0].data.pubDate.valueOf());
 ---
 <Layout active="home">
-  <PageIntro lang={lang} page="home" feed={`/${lang}/rss.xml`} />
+  <PageIntro lang={lang} page="home" feed={lang === 'zh' ? '/rss.xml' : `/${lang}/rss.xml`} />
   <section class="home-section">
     <h2>{t.latest}</h2>
     {posts.map(post => <PostCard post={post} lang={lang} />)}
@@ -24,14 +24,14 @@ const latestColumns = columns(lang).map(column => ({ ...column, posts: entries.f
   <section class="home-section column-updates">
     <h2>{t.columnUpdates}</h2>
     {latestColumns.map(column => <article class="post-card column-card">
-      <h3><a href={`/${lang}/columns/${column.id}/`} transition:name={columnTransition(lang, column.id, 'title')}>{column.title}</a></h3>
+      <h3><a href={`/${lang}/series/${column.id}/`} transition:name={columnTransition(lang, column.id, 'title')}>{column.title}</a></h3>
       <div class="post-card-body">
-        <a class="post-image-link" href={`/${lang}/columns/${column.id}/`} tabindex="-1" aria-hidden="true"><img class="post-thumbnail" src={columnCover(column, column.posts)} width="120" height="120" alt="" loading="lazy" transition:name={columnTransition(lang, column.id, 'image')} /></a>
-        <ul class="column-preview">{column.posts.slice(0, 2).map((post, index) => <li><a href={articleUrl(post)}>{post.data.title}</a>{index === 0 && <span class="latest-label">{t.latestLabel}</span>}</li>)}<li><a href={`/${lang}/columns/${column.id}/`}>{lang === 'zh' ? '更多…' : 'More…'}</a></li></ul>
+        <a class="post-image-link" href={`/${lang}/series/${column.id}/`} tabindex="-1" aria-hidden="true"><img class="post-thumbnail" src={columnCover(column, column.posts)} width="120" height="120" alt="" loading="lazy" transition:name={columnTransition(lang, column.id, 'image')} /></a>
+        <ul class="column-preview">{column.posts.slice(0, 2).map((post, index) => <li><a href={articleUrl(post)}>{post.data.title}</a>{index === 0 && <span class="latest-label">{t.latestLabel}</span>}</li>)}<li><a href={`/${lang}/series/${column.id}/`}>{lang === 'zh' ? '更多…' : 'More…'}</a></li></ul>
         <PostMeta post={column.posts[0]} />
       </div>
     </article>)}
-    <a class="more-link" href={`/${lang}/columns/`}>{t.more}</a>
+    <a class="more-link" href={`/${lang}/series/`}>{t.more}</a>
   </section>
   <LatestComments lang={lang} />
 </Layout>
