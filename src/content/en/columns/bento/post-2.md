@@ -1,7 +1,6 @@
 ---
 title: "Lawson spicy pork onigiri · ¥6.90"
 pubDate: 2026-09-16
-description: "A sample column entry showing how to record a convenience store meal. Replace this Markdown with your own notes, prices and pictures."
 author: Cloverta
 tags: [bento, everyday]
 sample: true
@@ -12,7 +11,7 @@ image:
 
 ## Today’s bento
 
-A sample column entry showing how to record a convenience store meal. Replace this Markdown with your own notes, prices and pictures.
+A sample post in this series showing how to record a convenience store meal. Replace this Markdown with your own notes, prices and pictures.
 
 ### A place for your notes
 

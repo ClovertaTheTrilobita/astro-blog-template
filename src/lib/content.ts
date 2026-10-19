@@ -1,7 +1,11 @@
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import type { Lang } from '../i18n';
 import { createHash } from 'node:crypto';
 export type Article = CollectionEntry<'posts'> | CollectionEntry<'columnPosts'>;
+export async function articleSummary(post: Article): Promise<string> {
+  if (post.collection === 'posts') return post.data.description;
+  return (await render(post)).remarkPluginFrontmatter.bodyExcerpt as string;
+}
 export const byDate = (a: Article, b: Article) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() || a.id.localeCompare(b.id);
 export async function articles(lang: Lang, collection: 'posts' | 'columnPosts' = 'posts') {
   return (await getCollection(collection, entry => entry.id.startsWith(`${lang}/`) && !entry.data.draft)).sort(byDate);

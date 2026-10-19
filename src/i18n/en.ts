@@ -1,9 +1,9 @@
 export default {
   siteTitle: 'Half Price! The Ben-to Club!', backgroundTitle: 'HP BEN-TO', backgroundText: 'Half Price',
-  nav: { home: 'Home', about: 'About', columns: 'Columns', archive: 'Archive', tags: 'Tags', friends: 'Friends' },
-  latest: 'Latest posts', columnUpdates: 'Column updates', latestUpdates: 'Latest updates', recentComments: 'Recent comments',
+  nav: { home: 'Home', about: 'About', columns: 'Series', archive: 'Archive', tags: 'Tags', friends: 'Friends' },
+  latest: 'Latest posts', columnUpdates: 'Series updates', latestUpdates: 'Latest updates', recentComments: 'Recent comments',
   more: 'View more >>>', viewPost: 'Read post >>>', expand: 'Show more', collapse: 'Show less ^', expandComments: 'Show 4 more comments', collapseComments: 'Collapse recent comments', latestLabel: '[Latest]',
-  theme: 'Toggle color theme', language: '中文', menu: 'Navigation', rss: 'Subscribe to blog RSS', columnRss: 'Subscribe to columns RSS',
+  theme: 'Toggle color theme', language: '中文', menu: 'Navigation', rss: 'Subscribe to blog RSS', columnRss: 'Subscribe to series RSS',
   comments: 'Comments', commentPrompt: 'Feel free to leave your thoughts here. 💭💡',
   subscribe: 'After signing in, click “Subscribe by Email” in the comment box to receive updates by email.',
   noComments: 'No comments yet. Say hello!', commentsFailed: 'Recent comments are temporarily unavailable.', retry: 'Retry', loading: 'Loading comments…',

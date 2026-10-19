@@ -18,3 +18,18 @@ const { Content } = await render(page);
     <div class="prose about-copy"><Content /></div>
   </article>
 </Layout>
+
+<style>
+  .page-heading { font-size: 28px; }
+  .about-copy { font-size: 17px; }
+  .about-copy :global(h2) { font-size: 28px; }
+  .about-copy :global(h3) { font-size: 23px; }
+  .about-copy :global(h4) { font-size: 20px; }
+
+  @media (max-width: 700px) {
+    .page-heading { font-size: 25px; }
+    .about-copy { font-size: 16px; }
+    .about-copy :global(h2) { font-size: 24px; }
+    .about-copy :global(h3) { font-size: 21px; }
+  }
+</style>

@@ -185,7 +185,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .post-card-compact { display: flow-root; margin-bottom: 44px; }
 .post-card-compact .post-card-body { display: block; }
 .post-card-compact h3 { font-size: 18px; color: var(--ink); margin-bottom: 10px; }
-.post-card-compact h3 > a { color: inherit; }
+.post-card-compact h3 > a { color: inherit; font-weight: 700; }
 .post-card-compact .post-description { font-size: 15px; line-height: 1.65; margin-bottom: 10px; }
 .post-card-compact .post-image-link { margin: 3px 47px 10px 30px; }
 .post-card-compact .post-thumbnail { width: 118px; height: 118px; }
@@ -193,6 +193,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .post-article { position: relative; }
 .article-header { display: flow-root; }
 .article-header h1 { font-size: 26px; color: var(--blue); line-height: 1.4; margin-bottom: 20px; overflow-wrap: anywhere; }
+.column-article .article-header h1 { font-weight: 700; }
 .article-cover { float: right; width: 126px; height: 126px; object-fit: cover; border-radius: 50%; margin: 4px 12px 10px 35px; }
 .article-description { font-size: 18px; line-height: 1.5; margin-bottom: 21px; }
 .article-byline { display: flex; flex-wrap: wrap; gap: 22px; font-size: 13px; margin-bottom: 23px; }

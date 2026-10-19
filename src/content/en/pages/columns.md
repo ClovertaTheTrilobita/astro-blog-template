@@ -1,5 +1,5 @@
 ---
-title: "Welcome to the columns."
+title: "Welcome to the series."
 ---
 
 A collection of shorter posts, updated a little more often.

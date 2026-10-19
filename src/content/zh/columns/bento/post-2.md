@@ -1,7 +1,6 @@
 ---
 title: "罗森湘味辣肉大口饭团 6.9元"
 pubDate: 2026-09-16
-description: "这是栏目示例，展示如何记录一份便利店便当。实际口味、价格与图片可以在这篇 Markdown 中替换。"
 author: 三叶
 tags: [便当, 便利店]
 sample: true

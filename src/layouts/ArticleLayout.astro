@@ -2,7 +2,7 @@
 import Layout from './Layout.astro';
 import Stripes from '../components/Stripes.astro';
 import Remark42Embed from '../components/Remark42Embed.astro';
-import { articles, articleSlug, articleUrl, articleTransition, formatDate, type Article } from '../lib/content';
+import { articles, articleSlug, articleUrl, articleTransition, articleSummary, formatDate, type Article } from '../lib/content';
 import { getTranslations, type Lang } from '../i18n';
 import type { MarkdownHeading } from 'astro';
 interface Props { post: Article; headings: MarkdownHeading[]; }
@@ -10,6 +10,7 @@ const { post, headings } = Astro.props;
 const lang = post.id.split('/')[0] as Lang;
 const t = getTranslations(lang);
 const isColumn = post.collection === 'columnPosts';
+const summary = await articleSummary(post);
 const siblings = (await articles(lang, post.collection)).filter(item => !isColumn || item.id.split('/')[2] === post.id.split('/')[2]);
 const index = siblings.findIndex(item => item.id === post.id);
 const previous = siblings[index - 1]; const next = siblings[index + 1];
@@ -17,13 +18,14 @@ const otherLang = lang === 'zh' ? 'en' : 'zh';
 const translated = (await articles(otherLang, post.collection)).find(item => articleSlug(item) === articleSlug(post));
 const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColumn ? 'columns' : 'archive'}/`;
 ---
-<Layout active={isColumn ? 'columns' : ''} title={post.data.title} description={post.data.description} image={post.data.image?.url} alternatePath={alternate}>
+<Layout active={isColumn ? 'columns' : ''} title={post.data.title} description={summary} image={post.data.image?.url} alternatePath={alternate}>
   <div class="reading-progress" aria-hidden="true"></div>
-  <article class="post-article">
+  <article class:list={['post-article', { 'column-article': isColumn }]}>
     <header class="article-header">
+      {isColumn && post.data.image && <img class="article-cover" src={post.data.image.url} alt={post.data.image.alt} width="126" height="126" transition:name={articleTransition(post, 'image')} />}
       <h1 transition:name={articleTransition(post, 'title')}>{post.data.title}</h1>
-      {post.data.image && <img class="article-cover" src={post.data.image.url} alt={post.data.image.alt} width="126" height="126" transition:name={articleTransition(post, 'image')} />}
-      <p class="article-description">{post.data.description}</p>
+      {!isColumn && post.data.image && <img class="article-cover" src={post.data.image.url} alt={post.data.image.alt} width="126" height="126" transition:name={articleTransition(post, 'image')} />}
+      {!isColumn && <p class="article-description">{summary}</p>}
       <p class="article-byline">{t.author} {post.data.author}<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>{post.data.sample && <span class="sample-label">{t.sample}</span>}</p>
       {!isColumn && <div class="tags flex flex-wrap gap-x-4 gap-y-1">{post.data.tags.map(tag => <a href={`/${lang}/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>)}</div>}
     </header>
@@ -39,7 +41,7 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
       <Remark42Embed slug={isColumn ? `columns/${articleSlug(post)}` : articleSlug(post)} pagePath={isColumn ? `/columns/${articleSlug(post)}/` : undefined} />
     </section>
   </article>
-  <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.data.title, description: post.data.description, datePublished: post.data.pubDate.toISOString(), author: { '@type': 'Person', name: post.data.author }, mainEntityOfPage: new URL(articleUrl(post), Astro.site).href }).replaceAll('<', '\\u003c')} />
+  <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.data.title, description: summary, datePublished: post.data.pubDate.toISOString(), author: { '@type': 'Person', name: post.data.author }, mainEntityOfPage: new URL(articleUrl(post), Astro.site).href }).replaceAll('<', '\\u003c')} />
 </Layout>
 <script>
   let controller: AbortController | undefined;

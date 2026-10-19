@@ -1,10 +1,8 @@
 ---
 title: "罗森茄汁牛肉蛋包饭 18.9元"
 pubDate: 2026-09-18
-description: "这是栏目示例，展示如何记录一份便利店便当。实际口味、价格与图片可以在这篇 Markdown 中替换。"
 author: 三叶
 tags: [便当, 便利店]
-sample: true
 image:
   url: /images/bento.svg
   alt: 便当示意图
