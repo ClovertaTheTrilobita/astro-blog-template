@@ -41,7 +41,7 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
       {!isColumn && <div class="tags flex flex-wrap gap-x-4 gap-y-1">{post.data.tags.map(tag => <a href={`/${lang}/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>)}</div>}
     </header>
     <Stripes class="article-divider" />
-    {tocHeadings.length > 0 && <aside class="article-toc"><details open><summary>{t.contents}</summary><nav aria-label={t.contents}>{tocRows.map(row => <div class="toc-row">{row.map(heading => <a href={`#${heading.slug}`} class:list={{ 'toc-sub': heading.depth > 2 }}>{heading.text}</a>)}</div>)}</nav></details></aside>}
+    {tocHeadings.length > 0 && <aside class="article-toc"><details open><summary>{t.contents}</summary><nav aria-label={t.contents}>{tocRows.map(row => <div class="toc-row">{row.map(heading => <a href={`#${heading.slug}`} data-depth={heading.depth} class:list={{ 'toc-sub': heading.depth > 2 }}>{heading.text}</a>)}</div>)}</nav></details></aside>}
     <div class="prose article-content"><slot /></div>
     <nav class="post-pagination" aria-label={lang === 'zh' ? '相邻文章' : 'Adjacent posts'}>
       <div>{previous && <><span>{t.previous}</span><a href={articleUrl(previous)}>{previous.data.title}<PostDiscount post={previous} lang={lang} /></a></>}</div>

@@ -181,6 +181,8 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .article-toc { position: fixed; top: 174px; left: calc(50% + 410px); width: min(175px, calc(50vw - 425px)); font-size: 15px; }
 .article-toc summary { color: var(--muted); text-align: right; font-size: 20px; list-style: none; border-bottom: 3px solid var(--red); cursor: pointer; margin-bottom: 8px; }
 .article-toc a { display: block; color: var(--ink); text-align: right; margin-block: 8px; line-height: 1.5; overflow-wrap: anywhere; }
+.article-toc a[data-depth="1"] { font-weight: 700; }
+.article-toc a[data-depth="2"] { font-weight: 500; }
 .article-toc .toc-sub { font-size: 13px; }
 .article-toc .toc-row { display: contents; }
 .prose { overflow-wrap: anywhere; }
