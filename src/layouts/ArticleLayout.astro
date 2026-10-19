@@ -63,14 +63,78 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
     const article = document.querySelector<HTMLElement>('.article-content');
     const progress = document.querySelector<HTMLElement>('.reading-progress');
     if (!article || !progress) return;
-    const updateProgress = () => {
+    const sections = [...document.querySelectorAll<HTMLAnchorElement>('.article-toc a[href^="#"]')].flatMap(link => {
+      let id: string;
+      try { id = decodeURIComponent(link.hash.slice(1)); } catch { return []; }
+      const heading = document.getElementById(id);
+      return heading && article.contains(heading) ? [{ link, heading }] : [];
+    });
+    for (const { link } of sections) {
+      link.addEventListener('pointerenter', event => {
+        if (event.pointerType === 'touch') return;
+        link.removeAttribute('data-toc-leaving');
+        link.setAttribute('data-toc-hovered', '');
+      }, { signal });
+      link.addEventListener('pointerleave', () => {
+        if (!link.hasAttribute('data-toc-hovered')) return;
+        link.removeAttribute('data-toc-hovered');
+        if (!link.hasAttribute('aria-current')) link.setAttribute('data-toc-leaving', '');
+      }, { signal });
+    }
+    let activeLink: HTMLAnchorElement | undefined;
+    let frame = 0;
+    const updateReadingState = () => {
       const start = article.getBoundingClientRect().top + scrollY;
       const distance = Math.max(article.offsetHeight - innerHeight, 1);
       progress.style.transform = `scaleX(${Math.min(1, Math.max(0, (scrollY - start) / distance))})`;
+      // Match the heading's 25px anchor offset, with a small rounding allowance.
+      let current: typeof sections[number] | undefined = sections[0];
+      for (const section of sections) {
+        if (section.heading.getBoundingClientRect().top > 32) break;
+        current = section;
+      }
+      if (scrollY > 0 && scrollY + innerHeight >= document.documentElement.scrollHeight - 2) current = sections.at(-1);
+      if (current?.link !== activeLink) {
+        activeLink?.removeAttribute('aria-current');
+        if (!activeLink?.hasAttribute('data-toc-hovered')) activeLink?.setAttribute('data-toc-leaving', '');
+        activeLink = current?.link;
+        activeLink?.removeAttribute('data-toc-leaving');
+        activeLink?.setAttribute('aria-current', 'location');
+      }
     };
-    addEventListener('scroll', updateProgress, { passive: true, signal });
-    addEventListener('resize', updateProgress, { signal });
-    updateProgress();
+    const queueUpdate = () => {
+      if (frame || signal.aborted) return;
+      frame = requestAnimationFrame(() => { frame = 0; updateReadingState(); });
+    };
+    addEventListener('scroll', queueUpdate, { passive: true, signal });
+    addEventListener('resize', queueUpdate, { signal });
+    addEventListener('hashchange', queueUpdate, { signal });
+    document.querySelector('.article-toc')?.addEventListener('animationend', event => {
+      if (event instanceof AnimationEvent && event.animationName === 'toc-color-leave') {
+        (event.target as HTMLElement).removeAttribute('data-toc-leaving');
+      }
+    }, { signal });
+    article.addEventListener('load', queueUpdate, { capture: true, signal });
+    document.fonts.addEventListener('loadingdone', queueUpdate, { signal });
+    const initialHash = location.hash;
+    const initialSection = sections.find(section => section.link.hash === initialHash);
+    let userInteracted = false;
+    if (initialSection) {
+      for (const event of ['pointerdown', 'wheel', 'touchstart', 'keydown']) {
+        addEventListener(event, () => { userInteracted = true; }, { once: true, passive: true, signal });
+      }
+    }
+    document.fonts.ready.then(() => {
+      // Font swapping can shift the browser's initial fragment landing position.
+      if (!signal.aborted && !userInteracted && initialSection && location.hash === initialHash) {
+        initialSection.heading.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }
+      queueUpdate();
+    });
+    const observer = new ResizeObserver(queueUpdate);
+    observer.observe(article);
+    signal.addEventListener('abort', () => { cancelAnimationFrame(frame); observer.disconnect(); }, { once: true });
+    updateReadingState();
     article.querySelectorAll<HTMLElement>('pre').forEach(pre => {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'copy-code';
       const zh = document.documentElement.lang.startsWith('zh'); button.textContent = zh ? '复制' : 'Copy';
