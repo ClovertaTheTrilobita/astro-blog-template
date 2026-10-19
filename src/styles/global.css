@@ -1,34 +1,7 @@
 @import "tailwindcss";
-@import "@fontsource/zcool-qingke-huangyou/latin-400.css";
-
-@font-face {
-  font-family: "Source Han Serif CN";
-  src: url("../assets/fonts/source-han-serif-cn-light.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Source Han Serif CN";
-  src: url("../assets/fonts/source-han-serif-cn-bold.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
-/* Load the small title subset first; other characters use the complete face above. */
-@font-face {
-  font-family: "Source Han Serif CN";
-  src: url("../assets/fonts/source-han-serif-cn-bold-title.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  unicode-range: U+0020-007E, U+4EF7, U+4F1A, U+4FBF, U+534A, U+540C, U+597D, U+5F53, U+FF01;
-}
 
 @theme {
-  --font-serif: "Source Han Serif CN", "Source Han Serif SC", "思源宋体", "Songti SC", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "思源宋体", "Songti SC", serif;
   --font-title: var(--font-serif);
   --font-display: "ZCOOL QingKe HuangYou", sans-serif;
 }
@@ -53,6 +26,11 @@
   font-synthesis: style;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+:root:lang(en) {
+  --font-serif: "Source Serif 4", Georgia, "Noto Serif SC", "Songti SC", serif;
+  --font-title: var(--font-serif);
+  font-optical-sizing: auto;
 }
 :root.dark {
   color-scheme: dark;
@@ -81,7 +59,7 @@ h1, h2, h3 { font-weight: inherit; }
 .site-shell { width: min(992px, calc(100% - 64px)); margin: 0 auto; padding-top: 30px; min-height: 100svh; display: flex; flex-direction: column; }
 .masthead { min-height: 80px; position: relative; z-index: 1; }
 .brand { position: relative; min-width: 0; }
-.brand-title { position: relative; display: block; color: var(--ink); font-size: 36px; font-weight: 700; font-style: italic; line-height: 1.4; letter-spacing: -1.15px; font-family: var(--font-title); white-space: nowrap; }
+.brand-title { position: relative; display: block; color: var(--ink); font-size: 36px; font-weight: 900; font-style: italic; line-height: 1.4; letter-spacing: -1.15px; font-family: var(--font-title); white-space: nowrap; }
 .brand-title:hover { text-decoration: none; }
 .brand-watermark { position: absolute; z-index: -1; top: -30px; left: -2px; color: var(--watermark); font: 400 80px/1.2 var(--font-display); letter-spacing: 2px; white-space: nowrap; pointer-events: none; }
 .header-controls { padding-top: 15px; padding-right: 14px; flex-shrink: 0; }
@@ -119,6 +97,7 @@ h2 { font-size: 22px; line-height: 1.5; }
 .home-section > h2 { margin-bottom: 24px; }
 .post-card { margin-bottom: 62px; }
 .post-card h3 { font-size: 22px; line-height: 1.45; margin: 0 0 20px; overflow-wrap: anywhere; }
+.post-card h3 > a { font-weight: bolder; }
 .post-card-body { display: flow-root; }
 .post-description { font-size: 17px; line-height: 1.5; margin: 0 0 23px; }
 .post-image-link { float: right; margin: 3px 47px 8px 28px; }
@@ -131,7 +110,7 @@ h2 { font-size: 22px; line-height: 1.5; }
 .column-updates { margin-top: 0; }
 .column-preview { list-style: none; padding: 0; margin: 0 0 20px; font-size: 16px; line-height: 1.5; }
 .column-preview li::before { content: '>> '; color: var(--muted); }
-.column-preview a { color: var(--ink); }
+.column-preview a { color: var(--ink); font-weight: bolder; }
 .latest-label { font-size: 14px; padding-left: 5px; white-space: nowrap; }
 .sample-label { font-size: 10px; font-family: var(--font-serif); color: var(--muted); margin-left: 8px; white-space: nowrap; }
 .latest-comments { font-size: 16px; }
@@ -167,6 +146,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .archive-year > h2 { font-size: 25px; margin-bottom: 20px; }
 .archive-entry { margin-bottom: 20px; }
 .archive-entry h3 { font-size: 22px; line-height: 1.4; margin-bottom: 3px; overflow-wrap: anywhere; }
+.archive-entry h3 > a { font-weight: bolder; }
 .friend-list { margin-top: 62px; }
 .friend-card { position: relative; display: flex; align-items: center; gap: 28px; padding: 5px; border: 2px solid var(--blue); color: var(--ink); box-shadow: 4px 4px 0 var(--stripe-blue); width: fit-content; min-width: 274px; max-width: 100%; background: var(--paper); transition: transform .22s, box-shadow .22s; }
 .friend-card:hover { transform: translate(-2px, -4px); box-shadow: 7px 10px 0 var(--stripe-blue); text-decoration: none; }
@@ -185,7 +165,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .post-card-compact { display: flow-root; margin-bottom: 44px; }
 .post-card-compact .post-card-body { display: block; }
 .post-card-compact h3 { font-size: 18px; color: var(--ink); margin-bottom: 10px; }
-.post-card-compact h3 > a { color: inherit; font-weight: 700; }
+.post-card-compact h3 > a { color: inherit; }
 .post-card-compact .post-description { font-size: 15px; line-height: 1.65; margin-bottom: 10px; }
 .post-card-compact .post-description > p { margin: 0; }
 .post-card-compact .post-image-link { margin: 3px 47px 10px 30px; }
@@ -193,8 +173,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .read-post { margin-left: .8em; white-space: nowrap; font-size: 13px; }
 .post-article { position: relative; }
 .article-header { display: flow-root; }
-.article-header h1 { font-size: 26px; color: var(--blue); line-height: 1.4; margin-bottom: 20px; overflow-wrap: anywhere; }
-.column-article .article-header h1 { font-weight: 700; }
+.article-header h1 { font-size: 26px; font-weight: bolder; color: var(--blue); line-height: 1.4; margin-bottom: 20px; overflow-wrap: anywhere; }
 .article-cover { float: right; width: 126px; height: 126px; object-fit: cover; border-radius: 50%; margin: 4px 12px 10px 35px; }
 .article-description { font-size: 18px; line-height: 1.5; margin-bottom: 21px; }
 .article-byline { display: flex; flex-wrap: wrap; gap: 22px; font-size: 13px; margin-bottom: 23px; }
@@ -240,7 +219,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .post-pagination { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 25px; padding-block: 14px; margin-block: 50px; border-block: 1px dashed var(--line); font-size: 13px; }
 .post-pagination > div:last-child { text-align: right; }
 .post-pagination span { display: block; color: var(--muted); margin-bottom: 10px; font-size: 11px; }
-.post-pagination a { display: block; overflow-wrap: anywhere; }
+.post-pagination a { display: block; font-weight: bolder; overflow-wrap: anywhere; }
 .comments-section { scroll-margin-top: 20px; }
 .comments-section h2 { margin-bottom: 10px; }
 .comments-section > p { color: var(--muted); font-size: 11px; margin-bottom: 10px; line-height: 1.7; }
