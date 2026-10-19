@@ -275,7 +275,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
   .column-preview { font-size: 14px; }
   .latest-label { font-size: 11px; }
   .site-footer { margin-top: 48px; font-size: 11px; }
-  .footer-stripes { width: 210px; gap: 10px; margin: 0 0 30px auto; }
+  .footer-stripes { width: 205px; gap: 9px; margin: 0 0 30px auto; }
   .social-links .icon { width: 30px; height: 30px; }
   .background-word { font-size: 80px; right: 0; opacity: .55; }
   .page-heading { font-size: 23px; }
