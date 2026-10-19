@@ -195,7 +195,7 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
             ><Icon name="mail" /></a
           >
         </div>
-        <p>
+        <p class="footer-content-pc">
           © {new Date().getUTCFullYear()} ClovertaTheTrilobita · <a
             href="https://github.com/ClovertaTheTrilobita/astro-blog-template"
             target="_blank"
@@ -204,6 +204,10 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
           {t.license}
           {t.footer}
         </p>
+        <div class="footer-content-mobile">
+          <p>© {new Date().getUTCFullYear()} ClovertaTheTrilobita</p>
+          <p>{t.footer}</p>
+        </div>
         <BuildHashBlocks />
       </footer>
     </div>
