@@ -161,7 +161,6 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .column-group { margin-bottom: 70px; }
 .column-heading { color: var(--blue); font-size: 22px; margin-bottom: 22px; }
 .column-header { display: flow-root; }
-.column-cover { float: right; width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 0 18px 28px; }
 .post-card-compact { display: flow-root; margin-bottom: 44px; }
 .post-card-compact .post-card-body { display: block; }
 .post-card-compact h3 { font-size: 18px; color: var(--ink); margin-bottom: 10px; }
@@ -286,7 +285,6 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
   .friend-card p { font-size: 12px; }
   .friend-card img { width: 50px; height: 50px; }
   .column-heading { font-size: 20px; }
-  .column-cover { width: 84px; height: 84px; margin-left: 18px; }
   .columns-latest { margin-top: 36px; margin-bottom: 24px; }
   .post-card-compact .post-thumbnail { width: 90px; height: 90px; }
   .post-card-compact .post-image-link { margin: 3px 0 10px 18px; }
