@@ -28,6 +28,7 @@ const alternate =
   Astro.url.pathname.replace(/^\/(zh|en)(?=\/|$)/, `/${otherLang}`);
 const links = Object.entries(t.nav);
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&display=swap&text=${encodeURIComponent(t.backgroundTitle + t.backgroundText)}`;
 ---
 
 <!doctype html>
@@ -36,6 +37,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <ClientRouter />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap"
+    />
+    <link rel="stylesheet" href={displayFontUrl} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="generator" content={Astro.generator} />
     <title>{title ? `${title} · ${t.siteTitle}` : t.siteTitle}</title>
