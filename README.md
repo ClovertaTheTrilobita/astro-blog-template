@@ -1,4 +1,4 @@
-# SanYeCao-Blog
+# Astro-Blog-Template
 
 <p align="right">[<a href="./README.md">中文</a> | <a href="./README-en.md">English</a>]</p>
 
@@ -17,7 +17,7 @@
 <br>
 
 <p align="center">
-    <img width="873" height="504" alt="image" src="https://github.com/user-attachments/assets/a39626f9-5ad6-450c-a535-2791878b5ebf" alt="preview-zh" />
+    <img width="956" height="442" alt="image" src="https://github.com/user-attachments/assets/f4918847-6a32-4b2b-971f-fc835ac11127" alt="preview-zh" />
 </p>
 
 <br>
