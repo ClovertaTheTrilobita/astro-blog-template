@@ -10,7 +10,7 @@ const friends = await getCollection('friends', friend => friend.id.startsWith(`$
 ---
 <Layout active="friends" title={t.nav.friends}>
   <PageIntro lang={lang} page="friends" />
-  <div class="friend-list flex flex-col items-start gap-6">
+  <div class="friend-list flex flex-wrap items-start gap-6">
     {friends.map(friend => <a class="friend-card" href={friend.data.url} target="_blank" rel="noopener noreferrer"><div><h2>{friend.data.name}</h2><p>{friend.data.description}</p></div><img src={friend.data.avatar} alt="" width="58" height="58" loading="lazy" /></a>)}
   </div>
 </Layout>
