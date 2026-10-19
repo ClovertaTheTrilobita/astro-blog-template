@@ -5,7 +5,7 @@ export default {
   nav: {
     home: '首页',
     about: '关于',
-    columns: '栏目',
+    series: '栏目',
     archive: '归档',
     tags: '标签',
     friends: '友链'

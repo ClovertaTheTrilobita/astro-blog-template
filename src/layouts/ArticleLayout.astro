@@ -2,23 +2,23 @@
 import Layout from './Layout.astro';
 import Stripes from '../components/Stripes.astro';
 import Remark42Embed from '../components/Remark42Embed.astro';
-import { articles, articleSlug, articleUrl, articleTransition, articleSummary, formatDate, type Article } from '../lib/content';
+import { articles, articleSlug, articleUrl, articleTransition, articleSummary, discussionKey, formatDate, type Article } from '../lib/content';
 import { getTranslations, type Lang } from '../i18n';
 import type { MarkdownHeading } from 'astro';
 interface Props { post: Article; headings: MarkdownHeading[]; }
 const { post, headings } = Astro.props;
 const lang = post.id.split('/')[0] as Lang;
 const t = getTranslations(lang);
-const isColumn = post.collection === 'columnPosts';
+const isColumn = post.collection === 'seriesPosts';
 const summary = await articleSummary(post);
 const siblings = (await articles(lang, post.collection)).filter(item => !isColumn || item.id.split('/')[2] === post.id.split('/')[2]);
 const index = siblings.findIndex(item => item.id === post.id);
 const previous = siblings[index - 1]; const next = siblings[index + 1];
 const otherLang = lang === 'zh' ? 'en' : 'zh';
 const translated = (await articles(otherLang, post.collection)).find(item => articleSlug(item) === articleSlug(post));
-const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColumn ? 'columns' : 'archive'}/`;
+const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColumn ? 'series' : 'archive'}/`;
 ---
-<Layout active={isColumn ? 'columns' : ''} title={post.data.title} description={summary} image={post.data.image?.url} alternatePath={alternate}>
+<Layout active={isColumn ? 'series' : ''} title={post.data.title} description={summary} image={post.data.image?.url} alternatePath={alternate}>
   <div class="reading-progress" aria-hidden="true"></div>
   <article class:list={['post-article', { 'column-article': isColumn }]}>
     <header class="article-header">
@@ -38,7 +38,7 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
     </nav>
     <section id="comments" class="comments-section">
       <h2>{t.comments}</h2><p>{t.commentPrompt}</p><p>{t.subscribe}</p>
-      <Remark42Embed slug={isColumn ? `columns/${articleSlug(post)}` : articleSlug(post)} pagePath={isColumn ? `/columns/${articleSlug(post)}/` : undefined} />
+      <Remark42Embed slug={articleSlug(post)} pagePath={discussionKey(post)} />
     </section>
   </article>
   <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.data.title, description: summary, datePublished: post.data.pubDate.toISOString(), author: { '@type': 'Person', name: post.data.author }, mainEntityOfPage: new URL(articleUrl(post), Astro.site).href }).replaceAll('<', '\\u003c')} />

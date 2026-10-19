@@ -12,7 +12,7 @@ const { Content } = await render(entry);
 const t = getTranslations(lang);
 ---
 <section class="page-intro">
-  <h1>{entry.data.title}{feed && <a class="rss-link" href={feed} data-astro-reload title={page === 'columns' ? t.columnRss : t.rss} aria-label={page === 'columns' ? t.columnRss : t.rss}><Icon name="rss" /></a>}</h1>
+  <h1>{entry.data.title}{feed && <a class="rss-link" href={feed} data-astro-reload title={page === 'series' ? t.columnRss : t.rss} aria-label={page === 'series' ? t.columnRss : t.rss}><Icon name="rss" /></a>}</h1>
   <div class="intro-copy prose"><Content /></div>
 </section>
 <Stripes class="intro-divider" />

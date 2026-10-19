@@ -50,13 +50,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       rel="alternate"
       type="application/rss+xml"
       title={t.rss}
-      href={`/${lang}/rss.xml`}
+      href={lang === "zh" ? "/rss.xml" : `/${lang}/rss.xml`}
     />
     <link
       rel="alternate"
       type="application/rss+xml"
       title={t.columnRss}
-      href={`/${lang}/columns/rss.xml`}
+      href={`/${lang}/series/rss.xml`}
     />
     <meta property="og:title" content={title ?? t.siteTitle} />
     <meta property="og:description" content={description} />

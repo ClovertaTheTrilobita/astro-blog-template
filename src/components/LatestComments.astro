@@ -3,7 +3,7 @@ import { getTranslations, type Lang } from '../i18n';
 import { articles, articleUrl } from '../lib/content';
 const { lang } = Astro.props as { lang: Lang };
 const t = getTranslations(lang);
-const localPaths = [...await articles(lang), ...await articles(lang, 'columnPosts')].map(articleUrl);
+const localPaths = [...await articles(lang), ...await articles(lang, 'seriesPosts')].map(articleUrl);
 ---
 <section class="latest-comments" data-lang={lang} data-paths={JSON.stringify(localPaths)} data-canonical-origin={Astro.site?.origin} data-host={import.meta.env.PUBLIC_REMARK42_HOST} data-site={import.meta.env.PUBLIC_REMARK42_SITE_ID} data-loading={t.loading} data-empty={t.noComments} data-error={t.commentsFailed} data-unconfigured={t.commentsUnconfigured} data-reply={t.reply} data-anonymous={t.anonymous} data-expand={t.expand} data-collapse={t.collapse} data-expand-comments={t.expandComments} data-collapse-comments={t.collapseComments}>
   <h2>{t.recentComments}</h2>

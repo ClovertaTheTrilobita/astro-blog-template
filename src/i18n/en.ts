@@ -1,6 +1,6 @@
 export default {
   siteTitle: 'Half Price! The Ben-to Club!', backgroundTitle: 'HP BEN-TO', backgroundText: 'Half Price',
-  nav: { home: 'Home', about: 'About', columns: 'Series', archive: 'Archive', tags: 'Tags', friends: 'Friends' },
+  nav: { home: 'Home', about: 'About', series: 'Series', archive: 'Archive', tags: 'Tags', friends: 'Friends' },
   latest: 'Latest posts', columnUpdates: 'Series updates', latestUpdates: 'Latest updates', recentComments: 'Recent comments',
   more: 'View more >>>', viewPost: 'Read post >>>', expand: 'Show more', collapse: 'Show less ^', expandComments: 'Show 4 more comments', collapseComments: 'Collapse recent comments', latestLabel: '[Latest]',
   theme: 'Toggle color theme', language: '中文', menu: 'Navigation', rss: 'Subscribe to blog RSS', columnRss: 'Subscribe to series RSS',
