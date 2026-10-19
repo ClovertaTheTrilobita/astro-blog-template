@@ -1,22 +1,37 @@
 ---
-import '../styles/global.css';
-import 'katex/dist/katex.min.css';
-import { getTranslations, getLangFromUrl } from '../i18n';
-import Icon from '../components/Icon.astro';
-import Stripes from '../components/Stripes.astro';
-import BuildHashBlocks from '../components/BuildHashBlocks.astro';
-import { ClientRouter, fade } from 'astro:transitions';
-interface Props { title?: string; description?: string; active?: string; alternatePath?: string; image?: string; }
-const { title, description = 'Half Price! 半价便当同好会！', active = 'home', alternatePath, image = '/images/avatar.jpg' } = Astro.props;
+import "../styles/global.css";
+import "katex/dist/katex.min.css";
+import { getTranslations, getLangFromUrl } from "../i18n";
+import Icon from "../components/Icon.astro";
+import Stripes from "../components/Stripes.astro";
+import BuildHashBlocks from "../components/BuildHashBlocks.astro";
+import { ClientRouter, fade } from "astro:transitions";
+interface Props {
+  title?: string;
+  description?: string;
+  active?: string;
+  alternatePath?: string;
+  image?: string;
+}
+const {
+  title,
+  description = "Half Price! 半价便当同好会！",
+  active = "home",
+  alternatePath,
+  image = "/images/avatar.jpg",
+} = Astro.props;
 const lang = getLangFromUrl(Astro.url);
 const t = getTranslations(lang);
-const otherLang = lang === 'zh' ? 'en' : 'zh';
-const alternate = alternatePath ?? Astro.url.pathname.replace(/^\/(zh|en)(?=\/|$)/, `/${otherLang}`);
+const otherLang = lang === "zh" ? "en" : "zh";
+const alternate =
+  alternatePath ??
+  Astro.url.pathname.replace(/^\/(zh|en)(?=\/|$)/, `/${otherLang}`);
 const links = Object.entries(t.nav);
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
+
 <!doctype html>
-<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+<html lang={lang === "zh" ? "zh-CN" : "en"}>
   <head>
     <ClientRouter />
     <meta charset="utf-8" />
@@ -26,9 +41,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title ? `${title} · ${t.siteTitle}` : t.siteTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang={otherLang === 'zh' ? 'zh-CN' : 'en'} href={new URL(alternate, Astro.site)} />
-    <link rel="alternate" type="application/rss+xml" title={t.rss} href={`/${lang}/rss.xml`} />
-    <link rel="alternate" type="application/rss+xml" title={t.columnRss} href={`/${lang}/columns/rss.xml`} />
+    <link
+      rel="alternate"
+      hreflang={otherLang === "zh" ? "zh-CN" : "en"}
+      href={new URL(alternate, Astro.site)}
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={t.rss}
+      href={`/${lang}/rss.xml`}
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={t.columnRss}
+      href={`/${lang}/columns/rss.xml`}
+    />
     <meta property="og:title" content={title ?? t.siteTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -38,65 +67,184 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <script is:inline data-astro-rerun>
       (() => {
         let theme;
-        try { theme = localStorage.getItem('theme'); } catch {}
-        document.documentElement.classList.toggle('dark', theme ? theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+        try {
+          theme = localStorage.getItem("theme");
+        } catch {}
+        document.documentElement.classList.toggle(
+          "dark",
+          theme
+            ? theme === "dark"
+            : matchMedia("(prefers-color-scheme: dark)").matches,
+        );
       })();
     </script>
   </head>
   <body>
-    <a class="skip-link" href="#main-content">{lang === 'zh' ? '跳至正文' : 'Skip to content'}</a>
-    <div class="background-word" aria-hidden="true" transition:name="site-background" transition:animate="none">{t.backgroundText}</div>
+    <a class="skip-link" href="#main-content"
+      >{lang === "zh" ? "跳至正文" : "Skip to content"}</a
+    >
+    <div
+      class="background-word"
+      aria-hidden="true"
+      transition:name="site-background"
+      transition:animate="none"
+    >
+      {t.backgroundText}
+    </div>
     <div class="site-shell">
-      <header class="masthead flex items-start justify-between gap-4" transition:name="site-header" transition:animate="none">
+      <header
+        class="masthead flex items-start justify-between gap-4"
+        transition:name="site-header"
+        transition:animate="none"
+      >
         <div class="brand">
-          <span class="brand-watermark" aria-hidden="true">{t.backgroundTitle}</span>
+          <span class="brand-watermark" aria-hidden="true"
+            >{t.backgroundTitle}</span
+          >
           <a class="brand-title" href={`/${lang}/`}>{t.siteTitle}</a>
           <Stripes large />
         </div>
         <div class="header-controls flex items-center gap-2">
-          <button type="button" id="theme-toggle" class="theme-toggle" aria-label={t.theme} title={t.theme} aria-pressed="false"><Icon name="moon" class="moon-icon" /><Icon name="sun" class="sun-icon" /></button>
-          <a class="language-switch" href={alternate} lang={otherLang} aria-label={otherLang === 'en' ? 'Switch to English' : '切换为中文'}>{t.language}</a>
+          <button
+            type="button"
+            id="theme-toggle"
+            class="theme-toggle"
+            aria-label={t.theme}
+            title={t.theme}
+            aria-pressed="false"
+            ><Icon name="moon" class="moon-icon" /><Icon
+              name="sun"
+              class="sun-icon"
+            /></button
+          >
+          <a
+            class="language-switch"
+            href={alternate}
+            lang={otherLang}
+            aria-label={otherLang === "en" ? "Switch to English" : "切换为中文"}
+            >{t.language}</a
+          >
         </div>
       </header>
       <div class="workspace">
-        <aside class="sidebar" transition:name="site-sidebar" transition:animate="none">
-          <a class="avatar-link" href={`/${lang}/about/`} aria-label={t.nav.about}><img class="avatar" src="/images/avatar.jpg" width="110" height="110" alt="Cloverta" /></a>
+        <aside
+          class="sidebar"
+          transition:name="site-sidebar"
+          transition:animate="none"
+        >
+          <a
+            class="avatar-link"
+            href={`https://cloverta.top/`}
+            aria-label={t.nav.about}
+            ><img
+              class="avatar"
+              src="/images/avatar.jpg"
+              width="110"
+              height="110"
+              alt="Cloverta"
+            /></a
+          >
           <nav aria-label={t.menu}>
-            {links.map(([key, label]) => <a class:list={['nav-link', { current: active === key }]} href={key === 'home' ? `/${lang}/` : `/${lang}/${key}/`} aria-current={active === key ? 'page' : undefined}><span>{label}</span></a>)}
+            {
+              links.map(([key, label]) => (
+                <a
+                  class:list={["nav-link", { current: active === key }]}
+                  href={key === "home" ? `/${lang}/` : `/${lang}/${key}/`}
+                  aria-current={active === key ? "page" : undefined}
+                >
+                  <span>{label}</span>
+                </a>
+              ))
+            }
           </nav>
         </aside>
-        <main id="main-content" class="min-w-0" transition:name="page-content" transition:animate={fade({ duration: '0.24s' })}><slot /></main>
+        <main
+          id="main-content"
+          class="min-w-0"
+          transition:name="page-content"
+          transition:animate={fade({ duration: "0.24s" })}
+        >
+          <slot />
+        </main>
       </div>
-      <footer class="site-footer" transition:name="site-footer" transition:animate="none">
+      <footer
+        class="site-footer"
+        transition:name="site-footer"
+        transition:animate="none"
+      >
         <Stripes large class="footer-stripes" />
         <div class="social-links flex justify-center items-center gap-6">
-          <a href="https://github.com/ClovertaTheTrilobita/" aria-label="GitHub" target="_blank" rel="me noopener noreferrer"><Icon name="github" /></a>
-          <a href="mailto:cloverta@petalmail.com" aria-label={lang === 'zh' ? '发送邮件' : 'Email'}><Icon name="mail" /></a>
+          <a
+            href="https://github.com/ClovertaTheTrilobita/"
+            aria-label="GitHub"
+            target="_blank"
+            rel="me noopener noreferrer"><Icon name="github" /></a
+          >
+          <a
+            href="mailto:cloverta@petalmail.com"
+            aria-label={lang === "zh" ? "发送邮件" : "Email"}
+            ><Icon name="mail" /></a
+          >
         </div>
-        <p>© {new Date().getUTCFullYear()} ClovertaTheTrilobita · <a href="https://github.com/ClovertaTheTrilobita/astro-blog-template" target="_blank" rel="noopener noreferrer">Source code</a> {t.license} {t.footer}</p>
+        <p>
+          © {new Date().getUTCFullYear()} ClovertaTheTrilobita · <a
+            href="https://github.com/ClovertaTheTrilobita/astro-blog-template"
+            target="_blank"
+            rel="noopener noreferrer">Source code</a
+          >
+          {t.license}
+          {t.footer}
+        </p>
         <BuildHashBlocks />
       </footer>
     </div>
     <script>
-      const updateButton = () => document.querySelector('#theme-toggle')?.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
+      const updateButton = () =>
+        document
+          .querySelector("#theme-toggle")
+          ?.setAttribute(
+            "aria-pressed",
+            String(document.documentElement.classList.contains("dark")),
+          );
       const applyTheme = () => {
-        let stored; try { stored = localStorage.getItem('theme'); } catch {}
-        document.documentElement.classList.toggle('dark', stored ? stored === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches);
+        let stored;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch {}
+        document.documentElement.classList.toggle(
+          "dark",
+          stored
+            ? stored === "dark"
+            : matchMedia("(prefers-color-scheme: dark)").matches,
+        );
         updateButton();
       };
-      document.addEventListener('astro:after-swap', applyTheme);
-      document.addEventListener('astro:page-load', () => {
+      document.addEventListener("astro:after-swap", applyTheme);
+      document.addEventListener("astro:page-load", () => {
         updateButton();
-        document.querySelector('#theme-toggle')?.addEventListener('click', () => {
-          const dark = document.documentElement.classList.toggle('dark');
-          try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch {}
-          updateButton();
-        });
+        document
+          .querySelector("#theme-toggle")
+          ?.addEventListener("click", () => {
+            const dark = document.documentElement.classList.toggle("dark");
+            try {
+              localStorage.setItem("theme", dark ? "dark" : "light");
+            } catch {}
+            updateButton();
+          });
       });
-      matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-        let stored; try { stored = localStorage.getItem('theme'); } catch {}
-        if (!stored) { document.documentElement.classList.toggle('dark', event.matches); updateButton(); }
-      });
+      matchMedia("(prefers-color-scheme: dark)").addEventListener(
+        "change",
+        (event) => {
+          let stored;
+          try {
+            stored = localStorage.getItem("theme");
+          } catch {}
+          if (!stored) {
+            document.documentElement.classList.toggle("dark", event.matches);
+            updateButton();
+          }
+        },
+      );
     </script>
   </body>
 </html>

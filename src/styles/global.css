@@ -203,6 +203,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .article-toc a { display: block; color: var(--ink); text-align: right; margin-block: 8px; line-height: 1.5; overflow-wrap: anywhere; }
 .article-toc .toc-sub { font-size: 13px; }
 .prose { overflow-wrap: anywhere; }
+.prose :is(b, strong) { font-weight: 700; }
 .prose p { margin-block: 1em; }
 .intro-copy p { margin-block: 0 8px; }
 .prose > :first-child { margin-top: 0; }
