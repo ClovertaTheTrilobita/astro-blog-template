@@ -3,7 +3,6 @@ title: "罗森湘味辣肉大口饭团 6.9元"
 pubDate: 2026-09-16
 author: 三叶
 tags: [便当, 便利店]
-sample: true
 image:
   url: /images/bento.svg
   alt: 便当示意图
