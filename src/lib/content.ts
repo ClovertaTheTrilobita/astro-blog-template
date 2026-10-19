@@ -1,7 +1,21 @@
 import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import type { Lang } from '../i18n';
 import { createHash } from 'node:crypto';
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import remarkExcerpt from '../plugins/remark-excerpt.mjs';
 export type Article = CollectionEntry<'posts'> | CollectionEntry<'seriesPosts'>;
+let previewProcessor: ReturnType<typeof createMarkdownProcessor> | undefined;
+export async function articlePreviewParagraphs(post: Article): Promise<string[]> {
+  if (post.collection === 'posts') return [post.data.description];
+  const { remarkPluginFrontmatter } = await render(post);
+  if (Array.isArray(remarkPluginFrontmatter.bodyExcerptParagraphs)) {
+    return remarkPluginFrontmatter.bodyExcerptParagraphs;
+  }
+  // Older content caches lack paragraph boundaries; recover them from the source.
+  previewProcessor ??= createMarkdownProcessor({ syntaxHighlight: false, remarkPlugins: [remarkExcerpt] });
+  const { metadata } = await (await previewProcessor).render(post.body ?? '');
+  return metadata.frontmatter.bodyExcerptParagraphs as string[];
+}
 export async function articleSummary(post: Article): Promise<string> {
   if (post.collection === 'posts') return post.data.description;
   return (await render(post)).remarkPluginFrontmatter.bodyExcerpt as string;
