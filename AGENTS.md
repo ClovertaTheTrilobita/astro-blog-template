@@ -30,3 +30,5 @@ Do not edit [README.md](./README.md) unless required by user, put new working lo
 This project is a refactor of [SanYeCao-Blog](~/Projects/SanYeCao-blog).
 
 Refer to this project in code/API implementation.
+
+Details see [cloverta-blog_project_structure.md](./cloverta-blog_project_structure.md).

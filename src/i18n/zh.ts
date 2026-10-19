@@ -1,0 +1,15 @@
+export default {
+  siteTitle: 'Half Price! 半价便当同好会！', backgroundTitle: 'HP BEN-TO', backgroundText: 'Half Price',
+  nav: { home: '首页', about: '关于', columns: '栏目', archive: '归档', tags: '标签', friends: '友链' },
+  latest: '最新博文', columnUpdates: '栏目更新', latestUpdates: '最新更新', recentComments: '最近评论',
+  more: '查看更多>>>', viewPost: '查看帖子>>>', expand: '展开更多', latestLabel: '【最新】',
+  theme: '切换深浅色模式', language: 'EN', menu: '导航菜单', rss: '订阅博文 RSS', columnRss: '订阅栏目 RSS',
+  comments: '评论区', commentPrompt: '欢迎在这里留下你的想法。💭💡',
+  subscribe: '你可以在登录评论区后，点击文本框右下角的「Subscribe by Email」以通过邮件接收最新的互动通知。',
+  noComments: '还没有评论，期待与你交流。', commentsFailed: '最近评论暂时无法加载。', retry: '重试', loading: '评论加载中…',
+  commentsUnconfigured: '评论服务尚未配置。', anonymous: '匿名用户', reply: '回复',
+  author: '作者', contents: '目录', previous: '上一篇', next: '下一篇', back: '返回归档',
+  noPosts: '这里还没有文章。', sample: '示例', footer: '内容版权归作者所有。',
+  license: '采用 MIT 协议开源。', notFound: '这份便当似乎走丢了。', returnHome: '返回首页',
+  tagCount: '篇文章', allTags: '全部标签',
+};

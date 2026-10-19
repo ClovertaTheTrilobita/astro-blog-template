@@ -1,0 +1,20 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import PostCard from '../../../../components/PostCard.astro';
+import Stripes from '../../../../components/Stripes.astro';
+import { articles, columns, columnId, columnTransition } from '../../../../lib/content';
+import { languages, type Lang } from '../../../../i18n';
+export function getStaticPaths() { return languages.flatMap(lang => columns(lang).map(column => ({ params: { lang, column: column.id }, props: { column } }))); }
+const { lang } = Astro.params as { lang: Lang };
+const { column } = Astro.props;
+const posts = (await articles(lang, 'columnPosts')).filter(post => columnId(post) === column.id);
+---
+<Layout active="columns" title={column.title}>
+  <header class="column-header">
+    <img class="column-cover" src={column.image} alt="" width="120" height="120" transition:name={columnTransition(lang, column.id, 'image')} />
+    <h1 class="page-heading"><a href={`/${lang}/columns/`} transition:name={columnTransition(lang, column.id, 'title')}>{column.title}</a></h1>
+    <p>{column.description}</p>
+  </header>
+  <Stripes class="intro-divider" />
+  {posts.map(post => <PostCard post={post} lang={lang} compact />)}
+</Layout>

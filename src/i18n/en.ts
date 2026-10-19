@@ -1,0 +1,15 @@
+export default {
+  siteTitle: 'Half Price! The Ben-to Club!', backgroundTitle: 'HP BEN-TO', backgroundText: 'Half Price',
+  nav: { home: 'Home', about: 'About', columns: 'Columns', archive: 'Archive', tags: 'Tags', friends: 'Friends' },
+  latest: 'Latest posts', columnUpdates: 'Column updates', latestUpdates: 'Latest updates', recentComments: 'Recent comments',
+  more: 'View more >>>', viewPost: 'Read post >>>', expand: 'Show more', latestLabel: '[Latest]',
+  theme: 'Toggle color theme', language: '中文', menu: 'Navigation', rss: 'Subscribe to blog RSS', columnRss: 'Subscribe to columns RSS',
+  comments: 'Comments', commentPrompt: 'Feel free to leave your thoughts here. 💭💡',
+  subscribe: 'After signing in, click “Subscribe by Email” in the comment box to receive updates by email.',
+  noComments: 'No comments yet. Say hello!', commentsFailed: 'Recent comments are temporarily unavailable.', retry: 'Retry', loading: 'Loading comments…',
+  commentsUnconfigured: 'The comment service has not been configured.', anonymous: 'Anonymous', reply: 'replied to',
+  author: 'Written by', contents: 'Contents', previous: 'Previous', next: 'Next', back: 'Back to archive',
+  noPosts: 'No posts here yet.', sample: 'Sample', footer: 'Content rights reserved.',
+  license: 'licensed under MIT.', notFound: 'This bento seems to have gone missing.', returnHome: 'Back home',
+  tagCount: 'posts', allTags: 'All tags',
+};

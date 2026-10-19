@@ -1,16 +1,18 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from "@astrojs/sitemap";
-import svelte from "@astrojs/svelte";
 import rehypeMermaid from "rehype-mermaid";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeImageCaptions from "./src/plugins/rehype-image-captions.mjs";
 // https://astro.build/config
 import { fileURLToPath } from 'node:url'
+import tailwindcss from '@tailwindcss/vite';
+import { unified } from '@astrojs/markdown-remark';
 
 export default defineConfig({
     vite: {
+        plugins: [tailwindcss()],
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -18,20 +20,23 @@ export default defineConfig({
         },
     },
     site: "https://blog.cloverta.top",
+    trailingSlash: 'ignore',
+    devToolbar: { enabled: false },
     redirects: {
-        "/": "/zh",
+        "/": "/zh/",
     },
-    integrations: [sitemap(), svelte()],
+    integrations: [sitemap()],
     markdown: {
+        shikiConfig: {
+            themes: { light: 'github-light', dark: 'github-dark' },
+        },
         syntaxHighlight: {
             type: 'shiki',
             excludeLangs: ['mermaid', 'math'],
         },
-        rehypePlugins: [
-            rehypeImageCaptions,
-            rehypeMermaid,
-            rehypeKatex,
-        ],
-        remarkPlugins: [remarkMath],
+        processor: unified({
+            rehypePlugins: [rehypeImageCaptions, rehypeMermaid, rehypeKatex],
+            remarkPlugins: [remarkMath],
+        }),
     },
 })

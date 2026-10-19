@@ -3,7 +3,10 @@ import { getLangFromUrl } from "@/i18n";
 
 const lang = getLangFromUrl(Astro.url);
 const loadingText = lang === "zh" ? "评论区加载中…" : "Loading comments…";
-const failedText = lang === "zh" ? "评论区加载失败" : "Failed to load comments";
+const configured = import.meta.env.PUBLIC_REMARK42_HOST && import.meta.env.PUBLIC_REMARK42_SITE_ID;
+const failedText = !configured
+    ? (lang === "zh" ? "评论服务尚未配置。" : "The comment service has not been configured.")
+    : (lang === "zh" ? "评论区暂时无法加载，请稍后刷新重试。" : "Comments are temporarily unavailable. Please refresh to retry.");
 ---
 
 <div id="remark42-status" role="status" aria-atomic="true">
@@ -52,7 +55,7 @@ const failedText = lang === "zh" ? "评论区加载失败" : "Failed to load com
         margin: 0;
         color: var(--status-color);
         font-size: 0.85rem;
-        font-weight: 400;
+        font-weight: 300;
         line-height: 1.6;
     }
 

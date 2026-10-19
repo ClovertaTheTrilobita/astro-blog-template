@@ -1,8 +1,7 @@
 ---
 import Remark42Status from "./Remark42Status.astro";
 
-const { slug } = Astro.props;
-const pagePath = `/posts/${slug}/`;
+const { slug, pagePath = `/posts/${slug}/` } = Astro.props;
 const host = import.meta.env.PUBLIC_REMARK42_HOST;
 const siteId = import.meta.env.PUBLIC_REMARK42_SITE_ID;
 ---
@@ -181,6 +180,17 @@ const siteId = import.meta.env.PUBLIC_REMARK42_SITE_ID;
 
     mountRemark42();
     setupRemark42ThemeObserver();
+</script>
+
+<script>
+    document.addEventListener('astro:before-swap', () => {
+        const remarkWindow = window as typeof window & {
+            __remark42LoadCleanup?: () => void;
+            __remark42ThemeObserver?: MutationObserver;
+        };
+        remarkWindow.__remark42LoadCleanup?.();
+        remarkWindow.__remark42ThemeObserver?.disconnect();
+    });
 </script>
 
 <style>
