@@ -2,7 +2,7 @@ export default {
   siteTitle: 'Half Price! 半价便当同好会！', backgroundTitle: 'HP BEN-TO', backgroundText: 'Half Price',
   nav: { home: '首页', about: '关于', columns: '栏目', archive: '归档', tags: '标签', friends: '友链' },
   latest: '最新博文', columnUpdates: '栏目更新', latestUpdates: '最新更新', recentComments: '最近评论',
-  more: '查看更多>>>', viewPost: '查看帖子>>>', expand: '展开更多', latestLabel: '【最新】',
+  more: '查看更多>>>', viewPost: '查看帖子>>>', expand: '展开更多', collapse: '收起^', expandComments: '再展开4条评论', collapseComments: '收起最近评论', latestLabel: '【最新】',
   theme: '切换深浅色模式', language: 'EN', menu: '导航菜单', rss: '订阅博文 RSS', columnRss: '订阅栏目 RSS',
   comments: '评论区', commentPrompt: '欢迎在这里留下你的想法。💭💡',
   subscribe: '你可以在登录评论区后，点击文本框右下角的「Subscribe by Email」以通过邮件接收最新的互动通知。',

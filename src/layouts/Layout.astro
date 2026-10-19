@@ -4,6 +4,7 @@ import 'katex/dist/katex.min.css';
 import { getTranslations, getLangFromUrl } from '../i18n';
 import Icon from '../components/Icon.astro';
 import Stripes from '../components/Stripes.astro';
+import BuildHashBlocks from '../components/BuildHashBlocks.astro';
 import { ClientRouter, fade } from 'astro:transitions';
 interface Props { title?: string; description?: string; active?: string; alternatePath?: string; image?: string; }
 const { title, description = 'Half Price! 半价便当同好会！', active = 'home', alternatePath, image = '/images/avatar.jpg' } = Astro.props;
@@ -12,7 +13,6 @@ const t = getTranslations(lang);
 const otherLang = lang === 'zh' ? 'en' : 'zh';
 const alternate = alternatePath ?? Astro.url.pathname.replace(/^\/(zh|en)(?=\/|$)/, `/${otherLang}`);
 const links = Object.entries(t.nav);
-const commit = import.meta.env.PUBLIC_GIT_COMMIT?.slice(0, 7);
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
@@ -74,7 +74,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           <a href="mailto:cloverta@petalmail.com" aria-label={lang === 'zh' ? '发送邮件' : 'Email'}><Icon name="mail" /></a>
         </div>
         <p>© {new Date().getUTCFullYear()} ClovertaTheTrilobita · <a href="https://github.com/ClovertaTheTrilobita/astro-blog-template" target="_blank" rel="noopener noreferrer">Source code</a> {t.license} {t.footer}</p>
-        <p class="build-hash">$build.onCommit.hash = {commit ? <a href={`https://github.com/ClovertaTheTrilobita/astro-blog-template/commit/${import.meta.env.PUBLIC_GIT_COMMIT}`}>{commit}</a> : 'local'}</p>
+        <BuildHashBlocks />
       </footer>
     </div>
     <script>

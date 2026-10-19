@@ -17,7 +17,7 @@ const otherLang = lang === 'zh' ? 'en' : 'zh';
 const translated = (await articles(otherLang, post.collection)).find(item => articleSlug(item) === articleSlug(post));
 const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColumn ? 'columns' : 'archive'}/`;
 ---
-<Layout active={isColumn ? 'columns' : 'archive'} title={post.data.title} description={post.data.description} image={post.data.image?.url} alternatePath={alternate}>
+<Layout active={isColumn ? 'columns' : ''} title={post.data.title} description={post.data.description} image={post.data.image?.url} alternatePath={alternate}>
   <div class="reading-progress" aria-hidden="true"></div>
   <article class="post-article">
     <header class="article-header">

@@ -5,6 +5,7 @@ import rehypeMermaid from "rehype-mermaid";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeImageCaptions from "./src/plugins/rehype-image-captions.mjs";
+import remarkExcerpt from "./src/plugins/remark-excerpt.mjs";
 // https://astro.build/config
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite';
@@ -36,7 +37,7 @@ export default defineConfig({
         },
         processor: unified({
             rehypePlugins: [rehypeImageCaptions, rehypeMermaid, rehypeKatex],
-            remarkPlugins: [remarkMath],
+            remarkPlugins: [remarkMath, remarkExcerpt],
         }),
     },
 })
