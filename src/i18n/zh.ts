@@ -1,4 +1,7 @@
 export default {
+  imagePreview: '图片预览', previewImage: '放大图片', closePreview: '关闭图片预览',
+  downloadImage: '下载图片', downloadingImage: '下载中…',
+  downloadImageFailed: '暂时无法直接下载，请再次点击下载图标打开原图保存。', imageLoadFailed: '图片加载失败，请尝试点击下载图标。',
   siteTitle: 'Half Price! 半价便当同好会！',
   backgroundTitle: 'HP BEN-TO',
   backgroundText: 'Half Price',

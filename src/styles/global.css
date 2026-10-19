@@ -208,6 +208,8 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .dark .astro-code, .dark .astro-code span { color: var(--shiki-dark) !important; background-color: var(--shiki-dark-bg) !important; }
 .copy-code { position: absolute; right: 10px; top: 7px; border: 0; font-size: 10px; background: var(--code); color: var(--muted); padding: 2px 7px; border-radius: 2px; }
 .prose img, .prose svg { max-width: 100%; height: auto; }
+[data-image-preview] { cursor: zoom-in; }
+.article-cover[data-image-preview] { position: relative; z-index: 1; }
 .prose img { display: block; margin-inline: auto; }
 .prose figure { margin: 1.5em 0; }
 .prose figcaption { font-size: 11px; text-align: center; color: var(--muted); margin-top: .6em; }
