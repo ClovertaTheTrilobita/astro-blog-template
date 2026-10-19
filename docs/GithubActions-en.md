@@ -4,7 +4,7 @@
 
 > [!NOTE]
 >
-> This project's GitHub Actions workflow listens for `git push` operations in the `src/blog` and `src/friends` directories on the `blog-content` branch. If either directory is updated, the build pipeline will be triggered.
+> This project's GitHub Actions workflow listens for `git push` operations on the `main` branch. If such operation happened, the build pipeline will be triggered.
 
 > [!IMPORTANT]
 >
