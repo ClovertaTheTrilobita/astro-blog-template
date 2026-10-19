@@ -193,6 +193,8 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .prose :is(h1,h2,h3,h4) { scroll-margin-top: 25px; }
 .article-content, .about-copy { font-size: 15px; line-height: 1.85; }
 .article-content { font-size: 17px; }
+.article-content h2 { font-weight: 700; }
+.article-content h3 { font-weight: 500; }
 .prose a:hover { text-decoration: underline; }
 .prose :is(ul,ol) { padding-left: 1.6em; margin-block: 1em; }
 .prose ul { list-style: disc; }
