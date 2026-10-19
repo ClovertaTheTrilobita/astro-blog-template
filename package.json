@@ -3,15 +3,26 @@
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": ">=22.22.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "PUBLIC_GIT_COMMIT=$(git rev-parse HEAD) astro dev",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "build": "PUBLIC_GIT_COMMIT=$(git rev-parse HEAD) astro build"
   },
   "dependencies": {
-    "astro": "^7.4.0"
+    "@astrojs/rss": "^4.0.17",
+    "@astrojs/sitemap": "^3.7.1",
+    "@astrojs/svelte": "^8.0.4",
+    "astro": "^6.0.8",
+    "katex": "^0.17.0",
+    "playwright": "^1.59.1",
+    "rehype-katex": "^7.0.1",
+    "rehype-mermaid": "^3.0.0",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
   }
 }
