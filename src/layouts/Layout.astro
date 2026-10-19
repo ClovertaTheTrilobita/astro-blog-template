@@ -6,6 +6,7 @@ import Icon from "../components/Icon.astro";
 import Stripes from "../components/Stripes.astro";
 import BuildHashBlocks from "../components/BuildHashBlocks.astro";
 import ImagePreview from "../components/ImagePreview.astro";
+import Beian from "../components/Beian.astro";
 import { ClientRouter, fade } from "astro:transitions";
 interface Props {
   title?: string;
@@ -39,7 +40,11 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap"
@@ -204,7 +209,9 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
           {t.license}
           {t.footer}
         </p>
+
         <BuildHashBlocks />
+        <Beian />
       </footer>
     </div>
     <ImagePreview lang={lang} />
@@ -228,11 +235,17 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
           const radius = Math.hypot(bounds.width / 2, bounds.height / 2);
           const proximity = 1 - Math.min(distance / Math.max(radius, 1), 1);
           // Keep the shadow opposite the light source without exceeding 14px.
-          const scale = Math.min(distance * .12, 14) / (distance || 1);
+          const scale = Math.min(distance * 0.12, 14) / (distance || 1);
           title.style.setProperty("--title-shadow-x", `${dx * scale}px`);
           title.style.setProperty("--title-shadow-y", `${dy * scale}px`);
-          title.style.setProperty("--title-shadow-blur", `${10 - proximity * 4}px`);
-          title.style.setProperty("--title-shadow-opacity", String(.12 + proximity * .3));
+          title.style.setProperty(
+            "--title-shadow-blur",
+            `${10 - proximity * 4}px`,
+          );
+          title.style.setProperty(
+            "--title-shadow-opacity",
+            String(0.12 + proximity * 0.3),
+          );
           title.setAttribute("data-light-source", "");
         };
         title.addEventListener("pointerenter", updateShadow, { signal });
