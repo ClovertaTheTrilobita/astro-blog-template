@@ -59,8 +59,9 @@ h1, h2, h3 { font-weight: inherit; }
 .site-shell { width: min(992px, calc(100% - 64px)); margin: 0 auto; padding-top: 30px; min-height: 100svh; display: flex; flex-direction: column; }
 .masthead { min-height: 80px; position: relative; z-index: 1; }
 .brand { position: relative; min-width: 0; }
-.brand-title { position: relative; display: block; color: var(--ink); font-size: 36px; font-weight: 900; font-style: italic; line-height: 1.4; letter-spacing: -1.15px; font-family: var(--font-title); white-space: nowrap; }
-.brand-title:hover { text-decoration: none; }
+.brand-title { position: relative; display: block; color: var(--ink); font-size: 36px; font-weight: 900; font-style: italic; line-height: 1.4; letter-spacing: -1.15px; font-family: var(--font-title); white-space: nowrap; -webkit-text-stroke: .04em transparent; paint-order: stroke fill; text-shadow: 0 0 0 rgb(0 0 0 / 0); transition: color 70ms ease, -webkit-text-stroke-color 70ms ease, text-shadow 70ms linear; }
+.brand-title:hover { color: #fff; -webkit-text-stroke-color: #000; text-decoration: none; }
+.brand-title[data-light-source] { text-shadow: var(--title-shadow-x) var(--title-shadow-y) var(--title-shadow-blur) rgb(0 0 0 / var(--title-shadow-opacity)); }
 .brand-watermark { position: absolute; z-index: -1; top: -30px; left: -2px; color: var(--watermark); font: 400 80px/1.2 var(--font-display); letter-spacing: 2px; white-space: nowrap; pointer-events: none; }
 .header-controls { padding-top: 15px; padding-right: 14px; flex-shrink: 0; }
 .theme-toggle { border: 0; background: transparent; width: 25px; height: 27px; padding: 1px; display: grid; place-items: center; }
@@ -193,6 +194,8 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .prose :is(h1,h2,h3,h4) { scroll-margin-top: 25px; }
 .article-content, .about-copy { font-size: 15px; line-height: 1.85; }
 .article-content { font-size: 17px; }
+.article-content h2 { font-weight: 700; }
+.article-content h3 { font-weight: 500; }
 .prose a:hover { text-decoration: underline; }
 .prose :is(ul,ol) { padding-left: 1.6em; margin-block: 1em; }
 .prose ul { list-style: disc; }
