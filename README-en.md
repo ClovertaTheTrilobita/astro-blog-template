@@ -1,4 +1,4 @@
-# SanYeCao-Blog
+# Astro-Blog-Template
 <p align="right">[<a href="./README.md">中文</a> | <a href="./README-en.md">English</a>]</p>
 <p align="center"><br>
     ✨Cloverta's Astro Blog Template✨<br>
@@ -15,9 +15,7 @@
 <br>
 
 <p align="center">
-    <img width="865" height="472" alt="image" src="https://github.com/user-attachments/assets/f0c8c75a-43ac-4e15-bce2-a1288c3b4598" 
-        alt="preview-en"
-    />
+	<img width="928" height="431" alt="image" src="https://github.com/user-attachments/assets/55bdd6f6-b1f6-4b0a-b0f0-f85403c75688" alt="preview-en"/>
 </p>
 
 <br>
