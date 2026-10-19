@@ -78,16 +78,6 @@
 
 安装部署详情请查看官方文档：<b>[Installation | Remark42](https://remark42.com/docs/getting-started/installation/)</b>
 
-<br>
-
-### 5. 更新日志
-
-详情请看：<b>[ChangeLog.md](./docs/ChangeLog.md)</b>
-
-### 6. 旧版本
-
-支持GISCUS的旧版本在 <b>[deprecated/giscus](https://github.com/ClovertaTheTrilobita/SanYeCao-blog/tree/deprecated/giscus)</b> 分支上，但是它有些时候没更新了，可能会有诸多问题。
-
 <hr>
 
 ## ⚖️ 许可
