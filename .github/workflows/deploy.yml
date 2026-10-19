@@ -3,7 +3,7 @@ name: Sync and Deploy Astro Blog
 on:
   push:
     branches:
-      - master
+      - main
 
   workflow_dispatch:
 
@@ -34,9 +34,9 @@ jobs:
           git checkout blog-content
           git pull origin blog-content
 
-      - name: Merge master into blog-content
+      - name: Merge main into blog-content
         run: |
-          git merge origin/master --no-edit
+          git merge origin/main --no-edit
 
       - name: Push blog-content
         run: |

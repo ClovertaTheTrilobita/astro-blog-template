@@ -247,7 +247,7 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
   .masthead { min-height: 65px; }
   .brand-title { font-size: clamp(18px, 4.9vw, 29px); letter-spacing: -.65px; white-space: normal; max-width: 440px; }
   .brand-watermark { font-size: 47px; top: -18px; letter-spacing: 0; }
-  .brand .stripes { width: 205px; gap: 9px; margin-top: 7px; }
+  .brand .stripes { width: 205px; height: 20px; min-height: 20px; gap: 9px; margin-top: 7px; }
   .header-controls { padding: 3px 0 0; gap: 4px; }
   .theme-toggle { width: 22px; height: 23px; }
   .theme-toggle .icon { width: 21px; height: 21px; }
