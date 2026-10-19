@@ -4,7 +4,7 @@
 
 > [!NOTE]
 >
-> 此项目的Github Actions监听`blog-content`分支中`src/blog`和`src/friends`两个目录的`git push`操作，两个目录有更新则触发构建流水线。
+> 此项目的Github Actions监听`main`分支中的`git push`操作，分支有更新则触发构建流水线。
 
 > [!IMPORTANT]
 >
