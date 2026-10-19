@@ -78,16 +78,6 @@ For installation and deployment details, please refer to the official documentat
 
 <br>
 
-### 5. Changelog
-
-For details, see: <b>[ChangeLog-en.md](./docs/ChangeLog-en.md)</b>
-
-### 6. Older Versions
-
-Older versions of GISCUS are available on the <b>[deprecated/giscus](https://github.com/ClovertaTheTrilobita/SanYeCao-blog/tree/deprecated/giscus)</b> branch, but they haven’t been updated in a while and may contain numerous issues.
-
-<hr>
-
 ## ⚖️ License 
 
 The source code in this repository is licensed under the `MIT License`.
