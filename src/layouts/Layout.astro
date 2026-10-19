@@ -207,6 +207,43 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
       </footer>
     </div>
     <script>
+      let titleShadowController: AbortController | undefined;
+      let clearTitleShadow: (() => void) | undefined;
+      function initTitleShadow() {
+        titleShadowController?.abort();
+        clearTitleShadow?.();
+        const title = document.querySelector<HTMLElement>(".brand-title");
+        if (!title) return;
+        titleShadowController = new AbortController();
+        const { signal } = titleShadowController;
+        clearTitleShadow = () => title.removeAttribute("data-light-source");
+        const updateShadow = (event: PointerEvent) => {
+          if (event.pointerType !== "mouse") return;
+          const bounds = title.getBoundingClientRect();
+          const dx = bounds.left + bounds.width / 2 - event.clientX;
+          const dy = bounds.top + bounds.height / 2 - event.clientY;
+          const distance = Math.hypot(dx, dy);
+          const radius = Math.hypot(bounds.width / 2, bounds.height / 2);
+          const proximity = 1 - Math.min(distance / Math.max(radius, 1), 1);
+          // Keep the shadow opposite the light source without exceeding 14px.
+          const scale = Math.min(distance * .12, 14) / (distance || 1);
+          title.style.setProperty("--title-shadow-x", `${dx * scale}px`);
+          title.style.setProperty("--title-shadow-y", `${dy * scale}px`);
+          title.style.setProperty("--title-shadow-blur", `${10 - proximity * 4}px`);
+          title.style.setProperty("--title-shadow-opacity", String(.12 + proximity * .3));
+          title.setAttribute("data-light-source", "");
+        };
+        title.addEventListener("pointerenter", updateShadow, { signal });
+        title.addEventListener("pointermove", updateShadow, { signal });
+        title.addEventListener("pointerleave", clearTitleShadow, { signal });
+        title.addEventListener("pointercancel", clearTitleShadow, { signal });
+        window.addEventListener("blur", clearTitleShadow, { signal });
+      }
+      document.addEventListener("astro:page-load", initTitleShadow);
+      document.addEventListener("astro:before-swap", () => {
+        titleShadowController?.abort();
+        clearTitleShadow?.();
+      });
       const updateButton = () =>
         document
           .querySelector("#theme-toggle")
