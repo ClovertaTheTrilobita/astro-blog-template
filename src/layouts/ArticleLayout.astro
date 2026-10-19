@@ -2,6 +2,7 @@
 import Layout from './Layout.astro';
 import Stripes from '../components/Stripes.astro';
 import Remark42Embed from '../components/Remark42Embed.astro';
+import PostDiscount from '../components/PostDiscount.astro';
 import { articles, articleSlug, articleUrl, articleTransition, articleSummary, discussionKey, formatDate, type Article } from '../lib/content';
 import { getTranslations, type Lang } from '../i18n';
 import type { MarkdownHeading } from 'astro';
@@ -23,7 +24,7 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
   <article class:list={['post-article', { 'column-article': isColumn }]}>
     <header class="article-header">
       {isColumn && post.data.image && <img class="article-cover" src={post.data.image.url} alt={post.data.image.alt} width="126" height="126" transition:name={articleTransition(post, 'image')} />}
-      <h1 transition:name={articleTransition(post, 'title')}>{post.data.title}</h1>
+      <h1 transition:name={articleTransition(post, 'title')}>{post.data.title}<PostDiscount post={post} lang={lang} /></h1>
       {!isColumn && post.data.image && <img class="article-cover" src={post.data.image.url} alt={post.data.image.alt} width="126" height="126" transition:name={articleTransition(post, 'image')} />}
       {!isColumn && <p class="article-description">{summary}</p>}
       <p class="article-byline">{t.author} {post.data.author}<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>{post.data.sample && <span class="sample-label">{t.sample}</span>}</p>
@@ -33,8 +34,8 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
     {headings.length > 0 && <aside class="article-toc"><details open><summary>{t.contents}</summary><nav aria-label={t.contents}>{headings.map(heading => <a href={`#${heading.slug}`} class:list={{ 'toc-sub': heading.depth > 2 }}>{heading.text}</a>)}</nav></details></aside>}
     <div class="prose article-content"><slot /></div>
     <nav class="post-pagination" aria-label={lang === 'zh' ? '相邻文章' : 'Adjacent posts'}>
-      <div>{previous && <><span>{t.previous}</span><a href={articleUrl(previous)}>{previous.data.title}</a></>}</div>
-      <div>{next && <><span>{t.next}</span><a href={articleUrl(next)}>{next.data.title}</a></>}</div>
+      <div>{previous && <><span>{t.previous}</span><a href={articleUrl(previous)}>{previous.data.title}<PostDiscount post={previous} lang={lang} /></a></>}</div>
+      <div>{next && <><span>{t.next}</span><a href={articleUrl(next)}>{next.data.title}<PostDiscount post={next} lang={lang} /></a></>}</div>
     </nav>
     <section id="comments" class="comments-section">
       <h2>{t.comments}</h2><p>{t.commentPrompt}</p><p>{t.subscribe}</p>
