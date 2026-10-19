@@ -61,6 +61,7 @@ h1, h2, h3 { font-weight: inherit; }
 .brand { position: relative; min-width: 0; }
 .brand-title { position: relative; display: block; color: var(--ink); font-size: 36px; font-weight: 900; font-style: italic; line-height: 1.4; letter-spacing: -1.15px; font-family: var(--font-title); white-space: nowrap; -webkit-text-stroke: .04em transparent; paint-order: stroke fill; text-shadow: 0 0 0 rgb(0 0 0 / 0); transition: color 70ms ease, -webkit-text-stroke-color 70ms ease, text-shadow 70ms linear; }
 .brand-title:hover { color: #fff; -webkit-text-stroke-color: #000; text-decoration: none; }
+.dark .brand-title:hover { color: #000; -webkit-text-stroke-color: #fff; }
 .brand-title[data-light-source] { text-shadow: var(--title-shadow-x) var(--title-shadow-y) var(--title-shadow-blur) rgb(0 0 0 / var(--title-shadow-opacity)); }
 .brand-watermark { position: absolute; z-index: -1; top: -30px; left: -2px; color: var(--watermark); font: 400 80px/1.2 var(--font-display); letter-spacing: 2px; white-space: nowrap; pointer-events: none; }
 .header-controls { padding-top: 15px; padding-right: 14px; flex-shrink: 0; }
@@ -181,7 +182,10 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .article-toc { position: fixed; top: 174px; left: calc(50% + 410px); width: min(175px, calc(50vw - 425px)); font-size: 15px; }
 .article-toc summary { color: var(--muted); text-align: right; font-size: 20px; list-style: none; border-bottom: 3px solid var(--red); cursor: pointer; margin-bottom: 8px; }
 .article-toc a { display: block; color: var(--ink); text-align: right; margin-block: 8px; line-height: 1.5; overflow-wrap: anywhere; }
+.article-toc a[data-depth="1"] { font-weight: 700; }
+.article-toc a[data-depth="2"] { font-weight: 500; }
 .article-toc .toc-sub { font-size: 13px; }
+.article-toc .toc-row { display: contents; }
 .prose { overflow-wrap: anywhere; }
 .prose :is(b, strong) { font-weight: 700; }
 .prose p { margin-block: 1em; }
@@ -245,15 +249,18 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
   .brand-watermark { font-size: 65px; top: -27px; }
 }
 @media (max-width: 700px) {
+  .article-toc nav { display: block; }
+  .article-toc .toc-row { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 22px; }
+  .article-toc .toc-row > a { max-width: 100%; }
   .site-shell { width: calc(100% - 36px); padding-top: 25px; }
   .masthead { min-height: 65px; }
   .brand-title { font-size: clamp(18px, 4.9vw, 29px); letter-spacing: -.65px; white-space: normal; max-width: 440px; }
   .brand-watermark { font-size: 47px; top: -18px; letter-spacing: 0; }
   .brand .stripes { width: 205px; height: 20px; min-height: 20px; gap: 9px; margin-top: 7px; }
   .header-controls { padding: 3px 0 0; gap: 4px; }
-  .theme-toggle { width: 22px; height: 23px; }
-  .theme-toggle .icon { width: 21px; height: 21px; }
-  .language-switch { font-size: 15px; }
+  .theme-toggle { width: 25px; height: 27px; }
+  .theme-toggle .icon { width: 24px; height: 24px; }
+  .language-switch { font-size: 17px; }
   .workspace { display: block; margin-top: 22px; }
   .sidebar { position: static; padding: 0 0 28px; display: flex; gap: 16px; align-items: center; }
   .avatar { width: 52px; height: 52px; }
