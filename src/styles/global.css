@@ -180,16 +180,15 @@ span.icon { background: currentColor; mask-size: contain; mask-position: center;
 .article-description { font-size: 18px; line-height: 1.5; margin-bottom: 21px; }
 .article-byline { display: flex; flex-wrap: wrap; gap: 22px; font-size: 13px; margin-bottom: 23px; }
 .article-divider { margin: 24px 0 50px auto; opacity: .52; }
-html:has(.article-toc) { scroll-behavior: smooth; }
+html:has(.article-toc), html:has(.article-toc) body { scroll-behavior: smooth; }
 .article-toc { position: fixed; top: 174px; left: calc(50% + 410px); width: min(175px, calc(50vw - 425px)); font-size: 15px; }
 .article-toc summary { color: var(--muted); text-align: right; font-size: 20px; list-style: none; border-bottom: 3px solid var(--red); cursor: pointer; margin-bottom: 8px; }
-.article-toc a { display: block; width: fit-content; max-width: 100%; color: var(--ink); text-align: right; margin-block: 8px; margin-left: auto; line-height: 1.5; overflow-wrap: anywhere; }
+.article-toc a { display: block; width: fit-content; max-width: 100%; color: var(--ink); text-align: right; margin-block: 8px; margin-left: auto; line-height: 1.5; overflow-wrap: anywhere; transition: color 70ms linear; }
 .article-toc a:hover { text-decoration: none; }
-.article-toc a:is([aria-current="location"], [data-toc-hovered], [data-toc-leaving]) { color: transparent; background-size: 200% 100%; background-position: 0 0; background-clip: text; -webkit-background-clip: text; }
-.article-toc a:is([aria-current="location"], [data-toc-hovered]) { background-image: linear-gradient(to right, var(--blue) 50%, var(--ink) 50%); animation: toc-color-enter .2s linear both; }
-.article-toc a[data-toc-leaving] { background-image: linear-gradient(to right, var(--ink) 50%, var(--blue) 50%); animation: toc-color-leave .2s linear both; }
-@keyframes toc-color-enter { from { background-position: 100% 0; } to { background-position: 0 0; } }
-@keyframes toc-color-leave { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.article-toc a[aria-current="location"] { color: var(--blue); }
+@media (hover: hover) and (pointer: fine) {
+  .article-toc a:hover { color: var(--blue); }
+}
 .article-toc a[data-depth="1"] { font-weight: 700; }
 .article-toc a[data-depth="2"] { font-weight: 500; }
 .article-toc .toc-sub { font-size: 13px; }
