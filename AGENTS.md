@@ -25,6 +25,8 @@ Consult these guides before working on related tasks:
 
 Do not edit [README.md](./README.md) unless required by user, put new working logs or needed readme in [AGENTLOGS.md](AGENTLOGS.md)
 
+Do not log translation event's etc. Log only when project sturcture changed.
+
 ## Implementation
 
 This project is a refactor of [SanYeCao-Blog](~/Projects/SanYeCao-blog).
