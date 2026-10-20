@@ -241,6 +241,14 @@ html:has(.article-toc), html:has(.article-toc) body { scroll-behavior: smooth; }
 .reading-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: var(--blue); transform: scaleX(0); transform-origin: left; z-index: 99; }
 .skip-link { font-size: 14px; position: fixed; left: 12px; top: -100px; background: var(--paper); border: 1px solid var(--blue); padding: 10px 15px; z-index: 100; }
 .skip-link:focus { top: 12px; }
+@media (min-width: 701px) {
+  .home-section > .post-card:not(.column-card) > h3 { max-width: var(--post-title-width, 100%); }
+  .home-section > .post-card-image-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .home-section > .post-card-image-top > h3,
+  .home-section > .post-card-image-top .post-card-body > :not(.post-image-link) { grid-column: 1; }
+  .home-section > .post-card-image-top .post-card-body { display: contents; }
+  .home-section > .post-card-image-top .post-image-link { grid-column: 2; grid-row: 1 / span 4; align-self: start; margin-top: 0; }
+}
 @media (max-width: 1240px) {
   .article-toc { position: static; width: 100%; margin: 0 0 35px; }
   .article-toc summary { font-size: 15px; text-align: left; padding-bottom: 5px; border-bottom-width: 1px; }
