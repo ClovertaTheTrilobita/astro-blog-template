@@ -262,7 +262,7 @@ html:has(.article-toc), html:has(.article-toc) body { scroll-behavior: smooth; }
 @media (max-width: 1060px) {
   .workspace { grid-template-columns: 100px minmax(0,1fr); gap: 50px; }
   .avatar { width: 100px; height: 100px; }
-  .background-word { opacity: .6; font-size: 105px; }
+  .background-word { display: none; }
   .post-image-link { margin-right: 10px; }
   .brand-title { font-size: 31px; }
   .brand-watermark { font-size: 65px; top: -27px; }
@@ -307,7 +307,6 @@ html:has(.article-toc), html:has(.article-toc) body { scroll-behavior: smooth; }
   .footer-content-mobile { display: block; }
   .footer-stripes { width: 205px; gap: 9px; margin: 0 0 30px auto; }
   .social-links .icon { width: 30px; height: 30px; }
-  .background-word { font-size: 80px; right: 0; opacity: .55; }
   .page-heading { font-size: 23px; }
   .archive-list { margin-top: 32px; }
   .archive-year { margin-bottom: 36px; }
