@@ -242,6 +242,10 @@ html:has(.article-toc), html:has(.article-toc) body { scroll-behavior: smooth; }
 .skip-link { font-size: 14px; position: fixed; left: 12px; top: -100px; background: var(--paper); border: 1px solid var(--blue); padding: 10px 15px; z-index: 100; }
 .skip-link:focus { top: 12px; }
 @media (min-width: 701px) {
+  .post-article:not(.column-article) .article-header h1 { max-width: var(--article-title-width, 100%); }
+  .article-header-cover-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .article-header-cover-top > :not(.article-cover) { grid-column: 1; }
+  .article-header-cover-top > .article-cover { grid-column: 2; grid-row: 1 / span 4; align-self: start; margin-top: 0; }
   .home-section > .post-card:not(.column-card) > h3 { max-width: var(--post-title-width, 100%); }
   .home-section > .post-card-image-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
   .home-section > .post-card-image-top > h3,
