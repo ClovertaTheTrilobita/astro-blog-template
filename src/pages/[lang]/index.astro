@@ -36,3 +36,49 @@ const latestColumns = columns(lang).map(column => ({ ...column, posts: entries.f
   </section>
   <LatestComments lang={lang} />
 </Layout>
+<script>
+  let controller: AbortController | undefined;
+  function initPostCardLayout() {
+    controller?.abort();
+    controller = new AbortController();
+    const { signal } = controller;
+    const cards = [...document.querySelectorAll<HTMLElement>('.home-section > .post-card:not(.column-card):has(.post-image-link)')];
+    if (!cards.length) return;
+    const desktop = matchMedia('(min-width: 701px)');
+    let frame = 0;
+    function updateLayout() {
+      for (const card of cards) {
+        if (!desktop.matches) {
+          card.classList.remove('post-card-image-top');
+          continue;
+        }
+        const title = card.querySelector<HTMLHeadingElement>('h3')!;
+        const image = card.querySelector<HTMLElement>('.post-image-link')!;
+        const imageStyle = getComputedStyle(image);
+        const coverRightWidth = card.clientWidth - parseFloat(imageStyle.marginRight);
+        const availableWidth = coverRightWidth - image.offsetWidth - parseFloat(imageStyle.marginLeft);
+        // Measure a single line independently of the card's current layout.
+        const measure = title.cloneNode(true) as HTMLHeadingElement;
+        measure.setAttribute('aria-hidden', 'true');
+        measure.style.cssText = 'position: fixed; visibility: hidden; white-space: nowrap; width: max-content; max-width: none;';
+        card.append(measure);
+        const fits = measure.getBoundingClientRect().width <= availableWidth;
+        measure.remove();
+        card.style.setProperty('--post-title-width', `${fits ? availableWidth : coverRightWidth}px`);
+        card.classList.toggle('post-card-image-top', fits);
+      }
+    }
+    function queueUpdate() {
+      if (frame || signal.aborted) return;
+      frame = requestAnimationFrame(() => { frame = 0; updateLayout(); });
+    }
+    const observer = new ResizeObserver(queueUpdate);
+    cards.forEach(card => observer.observe(card));
+    document.fonts.addEventListener('loadingdone', queueUpdate, { signal });
+    document.fonts.ready.then(queueUpdate);
+    signal.addEventListener('abort', () => { observer.disconnect(); cancelAnimationFrame(frame); }, { once: true });
+    updateLayout();
+  }
+  document.addEventListener('astro:page-load', initPostCardLayout);
+  document.addEventListener('astro:before-swap', () => controller?.abort());
+</script>
