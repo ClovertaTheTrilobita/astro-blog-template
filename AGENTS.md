@@ -32,3 +32,5 @@ This project is a refactor of [SanYeCao-Blog](~/Projects/SanYeCao-blog).
 Refer to this project in code/API implementation.
 
 Details see [cloverta-blog_project_structure.md](./cloverta-blog_project_structure.md).
+
+All developmental changes should be done in the `dev` branch, if not in this branch, check out to `dev` branch.
