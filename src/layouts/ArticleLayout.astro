@@ -56,6 +56,41 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
 </Layout>
 <script>
   let controller: AbortController | undefined;
+  function initArticleCover(signal: AbortSignal) {
+    const header = document.querySelector<HTMLElement>('.post-article:not(.column-article) > .article-header');
+    const title = header?.querySelector('h1');
+    const cover = header?.querySelector<HTMLImageElement>('.article-cover');
+    if (!header || !title || !cover) return;
+    const desktop = matchMedia('(min-width: 701px)');
+    let frame = 0;
+    function updateLayout() {
+      if (!desktop.matches) {
+        header!.classList.remove('article-header-cover-top');
+        return;
+      }
+      const coverStyle = getComputedStyle(cover!);
+      const coverRightWidth = header!.clientWidth - parseFloat(coverStyle.marginRight);
+      const availableWidth = coverRightWidth - cover!.offsetWidth - parseFloat(coverStyle.marginLeft);
+      const measure = title!.cloneNode(true) as HTMLHeadingElement;
+      measure.setAttribute('aria-hidden', 'true');
+      measure.style.cssText = 'position: fixed; visibility: hidden; white-space: nowrap; width: max-content; max-width: none;';
+      header!.append(measure);
+      const fits = measure.getBoundingClientRect().width <= availableWidth;
+      measure.remove();
+      header!.style.setProperty('--article-title-width', `${fits ? availableWidth : coverRightWidth}px`);
+      header!.classList.toggle('article-header-cover-top', fits);
+    }
+    function queueUpdate() {
+      if (frame || signal.aborted) return;
+      frame = requestAnimationFrame(() => { frame = 0; updateLayout(); });
+    }
+    const observer = new ResizeObserver(queueUpdate);
+    observer.observe(header);
+    document.fonts.addEventListener('loadingdone', queueUpdate, { signal });
+    document.fonts.ready.then(queueUpdate);
+    signal.addEventListener('abort', () => { observer.disconnect(); cancelAnimationFrame(frame); }, { once: true });
+    updateLayout();
+  }
   function initArticle() {
     controller?.abort();
     controller = new AbortController();
@@ -63,6 +98,7 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
     const article = document.querySelector<HTMLElement>('.article-content');
     const progress = document.querySelector<HTMLElement>('.reading-progress');
     if (!article || !progress) return;
+    initArticleCover(signal);
     const sections = [...document.querySelectorAll<HTMLAnchorElement>('.article-toc a[href^="#"]')].flatMap(link => {
       let id: string;
       try { id = decodeURIComponent(link.hash.slice(1)); } catch { return []; }
