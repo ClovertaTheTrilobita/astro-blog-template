@@ -46,6 +46,8 @@ jobs:
     needs: sync-blog-content
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    outputs:
+      deployed: ${{ steps.deploy.outcome }}
     environment:
       name: production
       url: https://blog.cloverta.top
@@ -95,6 +97,7 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
 
       - name: Deploy to server
+        id: deploy
         run: |
           rsync -avz --delete \
             --omit-dir-times \
@@ -104,14 +107,6 @@ jobs:
             -e "ssh -p ${DEPLOY_PORT}" \
             dist/ \
             ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/
-
-      - name: Refresh Alibaba Cloud CDN
-        uses: ./.github/actions/refresh-cdn
-        timeout-minutes: 5
-        with:
-          access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
-          access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
-          refresh-url: ${{ vars.SITE_URL || 'https://blog.cloverta.top/' }}
 
       - name: Submit to IndexNow
         uses: bojieyang/indexnow-action@v3
@@ -125,6 +120,8 @@ jobs:
   manual-deploy:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    outputs:
+      deployed: ${{ steps.deploy.outcome }}
     environment:
       name: production
       url: https://blog.cloverta.top
@@ -174,6 +171,7 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
 
       - name: Deploy to server
+        id: deploy
         run: |
           rsync -avz --delete \
             --omit-dir-times \
@@ -184,14 +182,6 @@ jobs:
             dist/ \
             ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/
       
-      - name: Refresh Alibaba Cloud CDN
-        uses: ./.github/actions/refresh-cdn
-        timeout-minutes: 5
-        with:
-          access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
-          access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
-          refresh-url: ${{ vars.SITE_URL || 'https://blog.cloverta.top/' }}
-
       - name: Submit to IndexNow
         uses: bojieyang/indexnow-action@v3
         with:
@@ -200,3 +190,31 @@ jobs:
           lastmod-required: false
           endpoint: api.indexnow.org
           limit: 1000
+
+  refresh-cdn:
+    name: Refresh Alibaba Cloud CDN
+    needs: [build-and-deploy, manual-deploy]
+    # One deployment path is skipped; refresh only after a successful upload.
+    if: >-
+      ${{ !cancelled() &&
+          (needs.build-and-deploy.outputs.deployed == 'success' ||
+           needs.manual-deploy.outputs.deployed == 'success') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    environment:
+      name: production
+      url: https://blog.cloverta.top
+    steps:
+      - name: Checkout blog-content branch
+        uses: actions/checkout@v7
+        with:
+          ref: blog-content
+
+      - name: Refresh Alibaba Cloud CDN
+        uses: ./.github/actions/refresh-cdn
+        with:
+          access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+          refresh-url: ${{ vars.SITE_URL || 'https://blog.cloverta.top/' }}
