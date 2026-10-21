@@ -867,11 +867,25 @@ html:has(.article-toc) body {
 }
 
 .article-toc {
+  --toc-top: min(174px, 25dvh);
   position: fixed;
-  top: 174px;
+  top: var(--toc-top);
   left: calc(50% + 410px);
   width: min(175px, calc(50vw - 425px));
   font-size: 15px;
+}
+
+.article-toc nav {
+  max-height: max(0px, calc(100dvh - var(--toc-top) - 32px - 48px));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  padding: 0 4px 24px;
+  scroll-padding-block: 12px 28px;
+}
+
+.article-toc nav[data-more-below] {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
 }
 
 .article-toc summary {
@@ -1261,6 +1275,7 @@ html:has(.article-toc) body {
   }
 
   .article-toc nav {
+    max-height: min(50dvh, 420px);
     display: flex;
     flex-wrap: wrap;
     gap: 0 22px;
