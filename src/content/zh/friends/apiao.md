@@ -2,5 +2,5 @@
 name: "阿飘"
 description: "天还没亮呢，有的是时间！"
 url: "https://ligeaaa.github.io/"
-avatar: "http://magic-knowledge.top/img/%25E5%25A4%25B4%25E5%2583%258F3.jpg"
+avatar: "https://files.seeusercontent.com/2026/10/21/Cl3h/pasted-image-1792558943568.webp"
 ---
