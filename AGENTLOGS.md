@@ -282,7 +282,7 @@ Markdown 预览提取保留正文段落边界，仍清理段内换行及多余�
 
 ## 2026-10-21 部署成功后刷新阿里云 CDN
 
-新增共享复合 Action `.github/actions/refresh-cdn/action.yml`，自动部署与手动部署均在 rsync 成功后、IndexNow 提交前调用。通过阿里云官方 CLI 提交 `RefreshObjectCaches`，使用 `Directory` 和 `Force=true` 刷新站点目录及子目录；返回刷新任务 ID 表示提交成功，节点缓存生效由阿里云异步处理。
+新增共享复合 Action `.github/actions/refresh-cdn/action.yml`，由独立 `refresh-cdn` job 调用。该 job 依赖自动部署和手动部署两条路径，根据实际 rsync 上传步骤的结果决定是否执行；任一路径上传成功且 workflow 未取消时运行，另一条路径被跳过不影响刷新，IndexNow 失败也不阻止已部署站点刷新。刷新 job 使用 `production` 环境以读取相同的 Secrets 和 Variables。通过阿里云官方 CLI 提交 `RefreshObjectCaches`，使用 `Directory` 和 `Force=true` 刷新站点目录及子目录；返回刷新任务 ID 表示提交成功，节点缓存生效由阿里云异步处理。
 
 在 GitHub 仓库的 Actions Secrets 或 `production` Environment Secrets 中配置 `ALIYUN_ACCESS_KEY_ID`、`ALIYUN_ACCESS_KEY_SECRET`。对应 RAM 用户需要目标域名的 `cdn:RefreshObjectCaches` 权限。刷新地址统一使用已有 Actions Variable `SITE_URL`；未配置时默认使用 `https://blog.cloverta.top/`，自动补齐目录末尾斜杠。凭据只通过环境变量传给 CLI，不写入站点构建文件。两项密钥均未配置时提示并跳过刷新，只配置一项时明确失败；API 调用失败会使刷新步骤失败。CLI 安装和刷新步骤合计最多执行 5 分钟。
 
