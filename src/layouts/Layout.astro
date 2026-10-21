@@ -7,6 +7,7 @@ import Stripes from "../components/Stripes.astro";
 import BuildHashBlocks from "../components/BuildHashBlocks.astro";
 import ImagePreview from "../components/ImagePreview.astro";
 import Beian from "../components/Beian.astro";
+import Spinner from "../components/Spinner.astro";
 import { ClientRouter, fade } from "astro:transitions";
 interface Props {
   title?: string;
@@ -94,6 +95,7 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
     </script>
   </head>
   <body>
+    <Spinner />
     <a class="skip-link" href="#main-content"
       >{lang === "zh" ? "跳至正文" : "Skip to content"}</a
     >
