@@ -30,9 +30,9 @@
 
 ## 🧳 使用
 
-### 1. Fork 这个仓库
+### 1. 使用模板
 
-<img width="294" height="155" alt="image" src="https://github.com/user-attachments/assets/6ffc9a32-c084-463f-8988-f7488baa44e0" />
+点击`Use this template`
 
 并将其克隆到本地。
 
