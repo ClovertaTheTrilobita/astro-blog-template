@@ -105,6 +105,14 @@ jobs:
             dist/ \
             ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/
 
+      - name: Refresh Alibaba Cloud CDN
+        uses: ./.github/actions/refresh-cdn
+        timeout-minutes: 5
+        with:
+          access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+          refresh-url: ${{ vars.SITE_URL || 'https://blog.cloverta.top/' }}
+
       - name: Submit to IndexNow
         uses: bojieyang/indexnow-action@v3
         with:
@@ -176,6 +184,14 @@ jobs:
             dist/ \
             ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/
       
+      - name: Refresh Alibaba Cloud CDN
+        uses: ./.github/actions/refresh-cdn
+        timeout-minutes: 5
+        with:
+          access-key-id: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          access-key-secret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+          refresh-url: ${{ vars.SITE_URL || 'https://blog.cloverta.top/' }}
+
       - name: Submit to IndexNow
         uses: bojieyang/indexnow-action@v3
         with:

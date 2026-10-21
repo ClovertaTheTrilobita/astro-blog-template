@@ -1,0 +1,54 @@
+name: Refresh Alibaba Cloud CDN
+description: Submit a directory refresh after a successful deployment
+
+inputs:
+  access-key-id:
+    description: AccessKey ID of a RAM user with CDN refresh permission
+    required: false
+  access-key-secret:
+    description: AccessKey secret of the RAM user
+    required: false
+  refresh-url:
+    description: Public directory URL to refresh, including the URL scheme
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Check CDN credentials
+      id: credentials
+      shell: bash
+      env:
+        ACCESS_KEY_ID: ${{ inputs.access-key-id }}
+        ACCESS_KEY_SECRET: ${{ inputs.access-key-secret }}
+      run: |
+        if [[ -z "$ACCESS_KEY_ID" && -z "$ACCESS_KEY_SECRET" ]]; then
+          echo "::warning::CDN refresh skipped: configure ALIYUN_ACCESS_KEY_ID and ALIYUN_ACCESS_KEY_SECRET in GitHub Secrets."
+          echo "enabled=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        if [[ -z "$ACCESS_KEY_ID" || -z "$ACCESS_KEY_SECRET" ]]; then
+          echo "::error::Both ALIYUN_ACCESS_KEY_ID and ALIYUN_ACCESS_KEY_SECRET must be configured."
+          exit 1
+        fi
+        echo "enabled=true" >> "$GITHUB_OUTPUT"
+
+    - name: Install Alibaba Cloud CLI
+      if: steps.credentials.outputs.enabled == 'true'
+      uses: aliyun/setup-aliyun-cli-action@v1
+
+    - name: Submit CDN directory refresh
+      if: steps.credentials.outputs.enabled == 'true'
+      shell: bash
+      env:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ${{ inputs.access-key-id }}
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${{ inputs.access-key-secret }}
+        ALIBABA_CLOUD_IGNORE_PROFILE: 'TRUE'
+        SITE_URL: ${{ inputs.refresh-url }}
+      run: |
+        aliyun cdn RefreshObjectCaches \
+          --region cn-hangzhou \
+          --method POST \
+          --ObjectPath "${SITE_URL%/}/" \
+          --ObjectType Directory \
+          --Force true
