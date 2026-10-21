@@ -18,11 +18,13 @@
 
 在仓库的<b>`Settings > Secrets and variables > Actions`</b>中，添加三个`Repository secrets`，分别为：
 
-| 密钥名               | 用途                         |
-| -------------------- | ---------------------------- |
-| `DEPLOY_KNOWN_HOSTS` | 用于让Gihub CI识别目标服务器 |
-| `DEPLOY_SSH_KEY`     | 用于登录目标服务器           |
-| `ENV_FILE`           | 私有环境变量                 |
+| 密钥名                     | 用途                         |
+| -------------------------- | ---------------------------- |
+| `DEPLOY_KNOWN_HOSTS`       | 用于让Gihub CI识别目标服务器 |
+| `DEPLOY_SSH_KEY`           | 用于登录目标服务器           |
+| `ENV_FILE`                 | 私有环境变量                 |
+| `ALIYUN_ACCESS_KEY_ID`     | 阿里云的AccessKey ID         |
+| `ALIYUN_ACCESS_KEY_SECRET` | 阿里云的AccessKey Secret     |
 
 #### 1.`DEPLOY_KNOWN_HOSTS`
 
@@ -83,6 +85,20 @@ PUBLIC_REMARK42_SITE_ID=
 如果你还没配置好或不知道这些是干什么的，请详见：<b>[EnvVariables.md](EnvVariables.md)</b>
 
 直接把`.env`中的所有内容复制到变量值中。
+
+#### 4.`ALIYUN_ACCESS_KEY_ID`和`ALIYUN_ACCESS_KEY_SECRET`
+
+如果你使用阿里云CDN为你的网站加速，Workflow在完成部署之后会通过阿里云API刷新CDN缓存。
+
+获取ID和Secret的方法为：
+
+- 打开 <b>[阿里云控制台](https://home.console.aliyun.com/home/dashboard/ProductAndService) > [访问控制](https://ram.console.aliyun.com/overview)</b>
+- 点击 <b>[快速开始](https://ram.console.aliyun.com/overview?activeTab=workflow)</b>
+- 在下方找到 <b>创建程序用户 > 创建可访问 AI 搜索服务的用户及 AccessKey</b>
+- 自定义好名称后点击最下方的 <b>执行配置</b>
+- 分别将出现的`AccessKey ID`和`AccessKey Secret`放入`ALIYUN_ACCESS_KEY_ID`和`ALIYUN_ACCESS_KEY_SECRET`
+
+如果未配置这两个Secret则不会触发CDN刷新，这一项Job依然会标注运行成功。
 
 ### 二、设置环境变量
 
