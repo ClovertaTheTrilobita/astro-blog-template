@@ -28,9 +28,9 @@ For more previews, please see: <b>[My Blog](https://blog.cloverta.top/)</b>.
 
 ## 🧳 Usage
 
-### 1. Fork this repository
+### 1. Use template
 
-<img width="294" height="155" alt="image" src="https://github.com/user-attachments/assets/6ffc9a32-c084-463f-8988-f7488baa44e0" />
+Click `Use this template`
 
 Then clone it to your local machine.
 
