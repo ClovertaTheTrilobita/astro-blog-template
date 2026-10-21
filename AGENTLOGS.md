@@ -279,3 +279,11 @@ Markdown 预览提取保留正文段落边界，仍清理段内换行及多余�
 新增 `src/components/Spinner.astro` 并接入公共布局，沿用原项目右上角圆环的尺寸、120ms 延迟出现及 2.1s 旋转节奏，颜色跟随当前主题。通过 Astro 导航加载回调显示和收起圆环，加载完成、失败或取消均清理状态，旧请求结束不会隐藏新请求的动画。手机端圆环上移以避让语言切换按钮，减少动态效果模式下显示静态圆环，隐藏时暂停旋转。
 
 验证：42 个文件类型检查零错误、零警告、零提示，39 页静态构建通过。中英文、320/390/1366px、深浅主题共 12 项浏览器检查通过，覆盖实际加载时旋转、右上角定位、不遮挡按钮及无横向溢出；另测快速加载不闪烁、连续导航取消、加载失败清理及减少动态效果，无页面脚本错误。截图：`.qa/spinner-320.png`、`.qa/spinner-390.png`、`.qa/spinner-1366.png`。
+
+## 2026-10-21 部署成功后刷新阿里云 CDN
+
+新增共享复合 Action `.github/actions/refresh-cdn/action.yml`，自动部署与手动部署均在 rsync 成功后、IndexNow 提交前调用。通过阿里云官方 CLI 提交 `RefreshObjectCaches`，使用 `Directory` 和 `Force=true` 刷新站点目录及子目录；返回刷新任务 ID 表示提交成功，节点缓存生效由阿里云异步处理。
+
+在 GitHub 仓库的 Actions Secrets 或 `production` Environment Secrets 中配置 `ALIYUN_ACCESS_KEY_ID`、`ALIYUN_ACCESS_KEY_SECRET`。对应 RAM 用户需要目标域名的 `cdn:RefreshObjectCaches` 权限。刷新地址统一使用已有 Actions Variable `SITE_URL`；未配置时默认使用 `https://blog.cloverta.top/`，自动补齐目录末尾斜杠。凭据只通过环境变量传给 CLI，不写入站点构建文件。两项密钥均未配置时提示并跳过刷新，只配置一项时明确失败；API 调用失败会使刷新步骤失败。CLI 安装和刷新步骤合计最多执行 5 分钟。
+
+验证：workflow 与复合 Action YAML 解析通过，两条部署路径均确认在上传成功后执行刷新；模拟调用验证凭据缺失、部分配置、目录 URL 规范化、CLI 参数和 API 失败传播，Shell 语法及差异空白检查通过。未调用真实 CDN API，需配置 Secrets 并合入 `main` 后通过部署验证。接口文档：https://www.alibabacloud.com/help/zh/cdn/developer-reference/api-cdn-2018-05-10-refreshobjectcaches 。
