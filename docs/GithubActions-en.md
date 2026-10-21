@@ -16,13 +16,15 @@ Create a new branch named <b>`blog-content`</b> based on the `master` branch. Pl
 
 ### 1. Set up SSH keys
 
-In your repository, go to <b>`Settings > Secrets and variables > Actions`</b>, and add three `Repository secrets`:
+In your repository, go to <b>`Settings > Secrets and variables > Actions`</b>, and add five `Repository secrets`:
 
 | Secret Name          | Purpose                                          |
 | -------------------- | ------------------------------------------------ |
 | `DEPLOY_KNOWN_HOSTS` | Allows GitHub CI to recognize the target server |
 | `DEPLOY_SSH_KEY`     | Used to log in to the target server             |
 | `ENV_FILE`           | Private environment variables                    |
+| `ALIYUN_ACCESS_KEY_ID` | Alibaba Cloud AccessKey ID                     |
+| `ALIYUN_ACCESS_KEY_SECRET` | Alibaba Cloud AccessKey Secret             |
 
 #### 1. `DEPLOY_KNOWN_HOSTS`
 
@@ -83,6 +85,20 @@ PUBLIC_REMARK42_SITE_ID=
 If you have not configured these yet or do not know what they mean, please see: <b>[EnvVariables-en.md](EnvVariables-en.md)</b>
 
 Simply copy all contents of your `.env` file into the variable value.
+
+#### 4. `ALIYUN_ACCESS_KEY_ID` and `ALIYUN_ACCESS_KEY_SECRET`
+
+If you use Alibaba Cloud CDN to accelerate your website, the workflow will refresh the CDN cache through the Alibaba Cloud API after deployment is complete.
+
+To obtain the ID and secret:
+
+- Open <b>[Alibaba Cloud Console](https://home.console.aliyun.com/home/dashboard/ProductAndService) > [Resource Access Management](https://ram.console.aliyun.com/overview)</b>.
+- Click <b>[Quick Start](https://ram.console.aliyun.com/overview?activeTab=workflow)</b>.
+- Find <b>Create a programmatic user > Create a user and AccessKey with access to AI Search</b> further down the page.
+- Enter a name, then click <b>Execute Configuration</b> at the bottom.
+- Copy the displayed `AccessKey ID` and `AccessKey Secret` into `ALIYUN_ACCESS_KEY_ID` and `ALIYUN_ACCESS_KEY_SECRET`, respectively.
+
+If these two secrets are not configured, CDN refresh will not be triggered, but this job will still be marked as ran successful.
 
 ### 2. Set up repository variables
 
