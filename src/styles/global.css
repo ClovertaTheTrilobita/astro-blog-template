@@ -888,6 +888,10 @@ html:has(.article-toc) body {
   mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
 }
 
+.article-toc nav[data-touch-scrolling] {
+  overscroll-behavior-y: contain;
+}
+
 .article-toc summary {
   color: var(--muted);
   text-align: right;

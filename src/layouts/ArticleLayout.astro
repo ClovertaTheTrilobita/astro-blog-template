@@ -60,6 +60,39 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
     const nav = document.querySelector<HTMLElement>('.article-toc nav');
     const details = nav?.closest('details');
     if (!nav || !details) return;
+    const inlineToc = matchMedia('(max-width: 1240px)');
+    let touch: { id: number; x: number; y: number } | undefined;
+    const resetTouch = () => {
+      touch = undefined;
+      nav.removeAttribute('data-touch-scrolling');
+    };
+    nav.addEventListener('touchstart', event => {
+      resetTouch();
+      if (!inlineToc.matches || event.touches.length !== 1 || (visualViewport?.scale ?? 1) > 1.05) return;
+      const point = event.touches[0];
+      touch = { id: point.identifier, x: point.clientX, y: point.clientY };
+      nav.setAttribute('data-touch-scrolling', '');
+    }, { passive: true, signal });
+    nav.addEventListener('touchmove', event => {
+      if (!touch) return;
+      if (!inlineToc.matches || event.touches.length !== 1) { resetTouch(); return; }
+      const point = event.touches[0];
+      if (point.identifier !== touch.id) { resetTouch(); return; }
+      const deltaY = touch.y - point.clientY;
+      const deltaX = touch.x - point.clientX;
+      touch = { id: point.identifier, x: point.clientX, y: point.clientY };
+      if (Math.abs(deltaY) <= Math.abs(deltaX)) return;
+      const maxScroll = Math.max(0, nav.scrollHeight - nav.clientHeight);
+      const pastTop = deltaY < 0 && nav.scrollTop <= 1;
+      const pastBottom = deltaY > 0 && nav.scrollTop >= maxScroll - 1;
+      if (!pastTop && !pastBottom) return;
+      // Keep native scrolling inside the TOC; forward outward movement at its edges.
+      if (event.cancelable) event.preventDefault();
+      window.scrollBy({ top: deltaY, behavior: 'instant' });
+    }, { passive: false, signal });
+    nav.addEventListener('touchend', resetTouch, { passive: true, signal });
+    nav.addEventListener('touchcancel', resetTouch, { passive: true, signal });
+    signal.addEventListener('abort', resetTouch, { once: true });
     const updateFade = () => {
       if (signal.aborted) return;
       nav.toggleAttribute('data-more-below', details.open && nav.scrollHeight - nav.clientHeight - nav.scrollTop > 1);
