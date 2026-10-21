@@ -41,7 +41,7 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
       {!isColumn && <div class="tags flex flex-wrap gap-x-4 gap-y-1">{post.data.tags.map(tag => <a href={`/${lang}/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>)}</div>}
     </header>
     <Stripes class="article-divider" />
-    {tocHeadings.length > 0 && <aside class="article-toc"><details open><summary>{t.contents}</summary><nav aria-label={t.contents}>{tocRows.map(row => <div class="toc-row">{row.map(heading => <a href={`#${heading.slug}`} data-depth={heading.depth} class:list={{ 'toc-sub': heading.depth > 2 }}>{heading.text}</a>)}</div>)}</nav></details></aside>}
+    {tocHeadings.length > 0 && <aside class="article-toc"><details open><summary>{t.contents}</summary><nav aria-label={t.contents} tabindex="0">{tocRows.map(row => <div class="toc-row">{row.map(heading => <a href={`#${heading.slug}`} data-depth={heading.depth} class:list={{ 'toc-sub': heading.depth > 2 }}>{heading.text}</a>)}</div>)}</nav></details></aside>}
     <div class="prose article-content"><slot /></div>
     <nav class="post-pagination" aria-label={lang === 'zh' ? '相邻文章' : 'Adjacent posts'}>
       <div>{previous && <><span>{t.previous}</span><a href={articleUrl(previous)}>{previous.data.title}<PostDiscount post={previous} lang={lang} /></a></>}</div>
@@ -56,6 +56,25 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
 </Layout>
 <script>
   let controller: AbortController | undefined;
+  function initTocScroll(signal: AbortSignal) {
+    const nav = document.querySelector<HTMLElement>('.article-toc nav');
+    const details = nav?.closest('details');
+    if (!nav || !details) return;
+    const updateFade = () => {
+      if (signal.aborted) return;
+      nav.toggleAttribute('data-more-below', details.open && nav.scrollHeight - nav.clientHeight - nav.scrollTop > 1);
+    };
+    nav.addEventListener('scroll', updateFade, { passive: true, signal });
+    details.addEventListener('toggle', updateFade, { signal });
+    addEventListener('resize', updateFade, { signal });
+    document.fonts.addEventListener('loadingdone', updateFade, { signal });
+    document.fonts.ready.then(updateFade);
+    const observer = new ResizeObserver(updateFade);
+    observer.observe(nav);
+    observer.observe(details);
+    signal.addEventListener('abort', () => observer.disconnect(), { once: true });
+    updateFade();
+  }
   function initArticleCover(signal: AbortSignal) {
     const header = document.querySelector<HTMLElement>('.post-article:not(.column-article) > .article-header');
     const title = header?.querySelector('h1');
@@ -98,6 +117,7 @@ const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColum
     const article = document.querySelector<HTMLElement>('.article-content');
     const progress = document.querySelector<HTMLElement>('.reading-progress');
     if (!article || !progress) return;
+    initTocScroll(signal);
     initArticleCover(signal);
     const sections = [...document.querySelectorAll<HTMLAnchorElement>('.article-toc a[href^="#"]')].flatMap(link => {
       let id: string;
