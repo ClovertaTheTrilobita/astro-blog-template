@@ -1,6 +1,6 @@
 ---
 title: "Lawson Xinjiang-Style Stir-Fried Chicken with Dried Chilies and Rice · ¥14.20"
-pubDate: 2026-10-20
+pubDate: 2026-10-24
 author: Cloverta
 discount: 75
 tags: [bento, convenience stores]

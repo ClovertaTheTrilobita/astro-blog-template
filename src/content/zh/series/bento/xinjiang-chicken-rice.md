@@ -1,6 +1,6 @@
 ---
 title: "罗森新疆辣皮子爆炒香鸡饭 14.2元"
-pubDate: 2026-10-20
+pubDate: 2026-10-24
 author: 三叶
 discount: 75
 tags: [便当, 便利店]
