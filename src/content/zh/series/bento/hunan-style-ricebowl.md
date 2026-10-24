@@ -17,7 +17,7 @@ image:
 
 热量：约778Kcal
 
-如果说[湘味辣肉大口饭团](http://localhost:4321/zh/series/bento/pepper-pork-riceball/)是辣椒炒肉盖饭极速版的话，那这个经典湘式双拼盖饭无疑是Pro Max版。
+如果说[湘味辣肉大口饭团](http://blog.cloverta.top/zh/series/bento/pepper-pork-riceball/)是辣椒炒肉盖饭极速版的话，那这个经典湘式双拼盖饭无疑是Pro Max版。
 
 确实非常经典，主菜为辣椒炒肉和外婆菜，小菜是甜辣萝卜丁。对于从小在湖南家庭长大的我来说，光闻着香味就知道这是我熟悉的味道。但可能是为了照顾海南人的口味，我并没有尝出什么辣味。
 
