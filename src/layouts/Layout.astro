@@ -331,6 +331,15 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
           audio.currentTime = 0;
         };
         resetAvatar = () => resetInteraction();
+        const banner = document.querySelector<HTMLElement>(".brand");
+        banner?.addEventListener("click", (event) => {
+          if (!matchMedia("(max-width: 700px)").matches
+            || !/^\/(zh|en)\/?$/.test(location.pathname)
+            || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault();
+          resetInteraction();
+          void audio.play().catch(() => {});
+        }, { signal });
         avatar.addEventListener("pointerenter", (event) => {
           if (event.pointerType !== "mouse") return;
           resetInteraction(true);
