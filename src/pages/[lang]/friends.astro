@@ -6,7 +6,7 @@ import { languagePaths, getTranslations } from '../../i18n';
 export const getStaticPaths = languagePaths;
 const { lang } = Astro.params as { lang: 'zh' | 'en' };
 const t = getTranslations(lang);
-const friends = await getCollection('friends', friend => friend.id.startsWith(`${lang}/`));
+const friends = await getCollection('friends');
 ---
 <Layout active="friends" title={t.nav.friends}>
   <PageIntro lang={lang} page="friends" />
