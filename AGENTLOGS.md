@@ -33,12 +33,12 @@ src/content/
       tags.md                 # 标签页介绍
       friends.md              # 友链介绍、交换格式
     posts/*.md                # 普通博文，保留来源项目原有文件名
-    friends/*.md              # 每位朋友一个文件
     series/
       bento/
         index.ts              # 栏目标识、标题、说明、图片
         post-1.md             # 每条短帖单独保存
         post-2.md
+  friends/*.md                # 双语页面共用，每位朋友一个文件
 ```
 
 非创作界面文案存放于 `src/i18n/zh.ts` 和 `en.ts`。普通博文已从来源项目迁移，中英文关于页保留来源文字并改为 Markdown。便当栏目包含两条标注 `sample: true` 的示例和一张便当示意图，便于替换为实际内容。设计稿中的其他占位栏目和空友链框不作为真实内容写入。
@@ -287,3 +287,10 @@ Markdown 预览提取保留正文段落边界，仍清理段内换行及多余�
 在 GitHub 仓库的 Actions Secrets 或 `production` Environment Secrets 中配置 `ALIYUN_ACCESS_KEY_ID`、`ALIYUN_ACCESS_KEY_SECRET`。对应 RAM 用户需要目标域名的 `cdn:RefreshObjectCaches` 权限。刷新地址统一使用已有 Actions Variable `SITE_URL`；未配置时默认使用 `https://blog.cloverta.top/`，自动补齐目录末尾斜杠。凭据只通过环境变量传给 CLI，不写入站点构建文件。两项密钥均未配置时提示并跳过刷新，只配置一项时明确失败；API 调用失败会使刷新步骤失败。CLI 安装和刷新步骤合计最多执行 5 分钟。
 
 验证：workflow 与复合 Action YAML 解析通过，两条部署路径均确认在上传成功后执行刷新；模拟调用验证凭据缺失、部分配置、目录 URL 规范化、CLI 参数和 API 失败传播，Shell 语法及差异空白检查通过。未调用真实 CDN API，需配置 Secrets 并合入 `main` 后通过部署验证。接口文档：https://www.alibabacloud.com/help/zh/cdn/developer-reference/api-cdn-2018-05-10-refreshobjectcaches 。
+
+
+## 2026-10-27 合并双语友链数据目录
+
+友链统一存放于 `src/content/friends/*.md`，中英文页面通过同一 `friends` 集合读取，移除按语言过滤及 `en/friends`、`zh/friends` 重复目录。保留任务开始时 `blog-content` 分支的全部 12 条友链及原始字段，替换 `dev` 分支的示例友链；两种语言的页面路由及 `pages/friends.md` 介绍各自保留。后续新增或修改友链只需维护共享目录。
+
+验证：42 个文件类型检查零错误、零警告、零提示，39 页静态构建通过。核对共享目录的 12 个文件与原始数据完全一致；中英文生成页面均包含相同的 12 张友链卡片，无重复链接，分别保留各自语言的页面介绍。
