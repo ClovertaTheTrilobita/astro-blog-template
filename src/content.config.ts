@@ -13,7 +13,7 @@ export const collections = {
     discount: z.number().min(0).max(100).optional(),
   }) }),
   pages: defineCollection({ loader: glob({ pattern: '*/pages/*.md', base: './src/content' }), schema: z.object({ title: z.string() }) }),
-  friends: defineCollection({ loader: glob({ pattern: '*/friends/*.md', base: './src/content' }), schema: z.object({
+  friends: defineCollection({ loader: glob({ pattern: '*.md', base: './src/content/friends' }), schema: z.object({
     name: z.string(), description: z.string(), url: z.url(), avatar: z.string(),
   }) }),
 };
