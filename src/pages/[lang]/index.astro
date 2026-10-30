@@ -28,7 +28,7 @@ const latestColumns = columns(lang).map(column => ({ ...column, posts: entries.f
       <h3><a href={`/${lang}/series/${column.id}/`} transition:name={columnTransition(lang, column.id, 'title')}>{column.title}</a></h3>
       <div class="post-card-body">
         <a class="post-image-link" href={`/${lang}/series/${column.id}/`} tabindex="-1" aria-hidden="true"><img class="post-thumbnail" src={columnCover(column, column.posts)} width="120" height="120" alt="" loading="lazy" transition:name={columnTransition(lang, column.id, 'image')} /></a>
-        <ul class="column-preview">{column.posts.slice(0, 2).map((post, index) => <li><a href={articleUrl(post)}>{post.data.title}</a><PostDiscount post={post} lang={lang} />{index === 0 && <span class="latest-label">{t.latestLabel}</span>}</li>)}<li><a href={`/${lang}/series/${column.id}/`}>{lang === 'zh' ? '更多…' : 'More…'}</a></li></ul>
+        <ul class="column-preview">{column.posts.slice(0, 4).map((post, index) => <li><a href={articleUrl(post)}>{post.data.title}</a><PostDiscount post={post} lang={lang} />{index === 0 && <span class="latest-label">{t.latestLabel}</span>}</li>)}<li><a href={`/${lang}/series/${column.id}/`}>{lang === 'zh' ? '更多…' : 'More…'}</a></li></ul>
         <PostMeta post={column.posts[0]} />
       </div>
     </article>)}
