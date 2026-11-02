@@ -561,11 +561,13 @@
         }
 
         const duration = 2200;
-        const start = performance.now();
+        // Keep the start and elapsed time on the iframe's animation clock.
+        let start;
 
         function animate(now) {
+          start ??= now;
           const progress = Math.min(
-            (now - start) / duration,
+            Math.max(0, (now - start) / duration),
             1
           );
 
