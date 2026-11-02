@@ -55,7 +55,7 @@ It is that simple.
 
 But at what cost?
 
-## Zero: The Geometry Behind Matrix Multiplication{#matrix-geometry}
+## Zero: The Geometry Behind Matrix Multiplication {#matrix-geometry}
 
 We know that in two-dimensional space, **any nonzero vector can be expressed as a linear combination of two linearly independent vectors**. These two linearly independent vectors are called **basis vectors**.
 
