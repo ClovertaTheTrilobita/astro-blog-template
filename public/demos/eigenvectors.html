@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>基向量变化与特征向量伸缩</title>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .ev {
+            --fg: #29364d;
+            --muted: #77869a;
+            --grid: #e7edf5;
+            --axis: #96a4b7;
+            --border: #dfe6f0;
+            --orange: #dc7130;
+            --purple: #825bd2;
+            --blue: #3278c8;
+
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            background: transparent;
+            color: var(--fg);
+            font-family: system-ui, -apple-system,
+                "PingFang SC", sans-serif;
+        }
+
+        .ev * {
+            box-sizing: border-box;
+        }
+
+        .ev svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .ev .grid-line {
+            stroke: var(--grid);
+            stroke-width: 1;
+        }
+
+        .ev .axis {
+            stroke: var(--axis);
+            stroke-width: 1.5;
+        }
+
+        .ev .axis-tip {
+            fill: var(--axis);
+        }
+
+        .ev .tick {
+            fill: var(--muted);
+            font: 12px system-ui, sans-serif;
+        }
+
+        /* 原来的单位正方形 */
+        .ev .original-square {
+            fill: none;
+            stroke: var(--axis);
+            stroke-width: 1.2;
+            stroke-dasharray: 4 6;
+            opacity: .42;
+        }
+
+        /* 变换后的平行四边形 */
+        .ev .area {
+            fill: var(--blue);
+            fill-opacity: .13;
+            stroke: var(--blue);
+            stroke-opacity: .3;
+            stroke-width: 1.5;
+            stroke-dasharray: 5 5;
+        }
+
+        /* 特征向量方向参考线 */
+        .ev .direction {
+            stroke: var(--blue);
+            opacity: .36;
+            stroke-width: 1.5;
+            stroke-dasharray: 5 7;
+        }
+
+        .ev .vec {
+            color: var(--blue);
+        }
+
+        .ev .vec.orange {
+            color: var(--orange);
+        }
+
+        .ev .vec.purple {
+            color: var(--purple);
+        }
+
+        .ev .vec line {
+            stroke: currentColor;
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+
+        .ev .vec polygon {
+            fill: currentColor;
+        }
+
+        .ev .vec text {
+            fill: currentColor;
+            font: 700 16px system-ui, sans-serif;
+        }
+
+        .ev .origin {
+            fill: var(--fg);
+        }
+
+        /* 播放与重置按钮 */
+        .ev .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ev button {
+            appearance: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 22px;
+            font: 600 14px system-ui, sans-serif;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: opacity .15s;
+        }
+
+        .ev button:hover {
+            opacity: .8;
+        }
+
+        .ev button:focus-visible {
+            outline: 3px solid var(--blue);
+            outline-offset: 2px;
+        }
+
+        .ev .play {
+            color: white;
+            background: var(--blue);
+            border-color: var(--blue);
+        }
+
+        .ev .reset {
+            background: transparent;
+            color: var(--fg);
+        }
+
+        /* 深色模式 */
+        @media (prefers-color-scheme: dark) {
+            .ev {
+                --fg: #e9eff8;
+                --muted: #a6b2c3;
+                --grid: #303b4c;
+                --axis: #71829b;
+                --border: #37455a;
+                --orange: #ffac76;
+                --purple: #bf9fff;
+                --blue: #81b8ff;
+            }
+
+            .ev .play {
+                color: #172335;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .ev button {
+                padding: 7px 20px;
+            }
+
+            .ev .outer-tick {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ev" id="ev-basis-demo">
+
+        <svg id="ev-svg" viewBox="0 0 720 386" role="img" aria-label="基向量改变方向，特征向量沿原来的直线伸长">
+            <g id="ev-grid"></g>
+            <g id="ev-axes"></g>
+
+            <!-- 原来的单位正方形 -->
+            <polygon id="ev-original" class="original-square" />
+
+            <!-- 特征向量方向不变的参考线 -->
+            <line id="ev-direction" class="direction" />
+
+            <!-- 随基向量变化的区域 -->
+            <polygon id="ev-area" class="area" />
+
+            <!-- 第一个基向量 -->
+            <g class="vec orange" id="ev-e1">
+                <line />
+                <polygon />
+                <text>e₁</text>
+            </g>
+
+            <!-- 第二个基向量 -->
+            <g class="vec purple" id="ev-e2">
+                <line />
+                <polygon />
+                <text>e₂</text>
+            </g>
+
+            <!-- 特征向量 -->
+            <g class="vec" id="ev-v">
+                <line />
+                <polygon />
+                <text>Av = 1.5v</text>
+            </g>
+
+            <circle cx="360" cy="330" r="3.2" class="origin" />
+
+            <text x="347" y="349" text-anchor="end" class="tick">O</text>
+
+        </svg>
+
+        <div class="controls">
+            <button type="button" class="play" id="ev-play">▶ 播放</button>
+
+            <button type="button" class="reset" id="ev-reset">重置</button>
+        </div>
+
+    </div>
+
+    <script>
+        (() => {
+            'use strict';
+
+            const NS = 'http://www.w3.org/2000/svg';
+
+            const $ = id => document.getElementById(id);
+
+            const svg = $('ev-svg');
+            const grid = $('ev-grid');
+            const axes = $('ev-axes');
+
+            // 数学坐标原点和单位长度
+            const O = { x: 360, y: 330 };
+            const SCALE = 132;
+
+            function xy(x, y) {
+                return [
+                    O.x + SCALE * x,
+                    O.y - SCALE * y
+                ];
+            }
+
+            function attrs(el, values) {
+                for (const [k, val] of Object.entries(values)) {
+                    el.setAttribute(k, String(val));
+                }
+            }
+
+            function add(
+                tag,
+                parent,
+                values = {},
+                content = null
+            ) {
+                const el = document.createElementNS(NS, tag);
+
+                attrs(el, values);
+
+                if (content !== null) {
+                    el.textContent = content;
+                }
+
+                parent.append(el);
+                return el;
+            }
+
+            function polygon(el, points) {
+                el.setAttribute(
+                    'points',
+                    points
+                        .map(([x, y]) => xy(x, y).join(','))
+                        .join(' ')
+                );
+            }
+
+            // ====== 绘制坐标网格 ======
+
+            for (let x = -2; x <= 2; x++) {
+                const [px] = xy(x, 0);
+
+                add('line', grid, {
+                    class: 'grid-line',
+                    x1: px,
+                    x2: px,
+                    y1: 12,
+                    y2: 380
+                });
+
+                if (x !== 0) {
+                    add('text', axes, {
+                        class: Math.abs(x) === 2
+                            ? 'tick outer-tick'
+                            : 'tick',
+                        x: px,
+                        y: 349,
+                        'text-anchor': 'middle'
+                    }, String(x).replace('-', '−'));
+                }
+            }
+
+            for (let y = 0; y <= 2; y++) {
+                const [, py] = xy(0, y);
+
+                add('line', grid, {
+                    class: 'grid-line',
+                    x1: 24,
+                    x2: 696,
+                    y1: py,
+                    y2: py
+                });
+
+                if (y !== 0) {
+                    add('text', axes, {
+                        class: 'tick',
+                        x: 347,
+                        y: py + 4,
+                        'text-anchor': 'end'
+                    }, String(y));
+                }
+            }
+
+            // ====== 坐标轴 ======
+
+            add('line', axes, {
+                class: 'axis',
+                x1: 24,
+                y1: 330,
+                x2: 694,
+                y2: 330
+            });
+
+            add('line', axes, {
+                class: 'axis',
+                x1: 360,
+                y1: 380,
+                x2: 360,
+                y2: 12
+            });
+
+            add('polygon', axes, {
+                class: 'axis-tip',
+                points: '694,326 702,330 694,334'
+            });
+
+            add('polygon', axes, {
+                class: 'axis-tip',
+                points: '356,12 360,4 364,12'
+            });
+
+            add('text', axes, {
+                class: 'tick',
+                x: 702,
+                y: 317
+            }, 'x');
+
+            add('text', axes, {
+                class: 'tick',
+                x: 370,
+                y: 16
+            }, 'y');
+
+            // ====== 原始单位正方形 ======
+
+            // 原始的 e1=(1,0), e2=(0,1)
+            // 灰色虚线始终不变，用来对比基向量变化
+
+            polygon(
+                $('ev-original'),
+                [
+                    [0, 0],
+                    [1, 0],
+                    [1, 1],
+                    [0, 1]
+                ]
+            );
+
+            // ====== 特征方向参考线 ======
+
+            // y=x，动画过程中该方向始终不变
+
+            const [gx1, gy1] = xy(-0.32, -0.32);
+            const [gx2, gy2] = xy(1.93, 1.93);
+
+            attrs($('ev-direction'), {
+                x1: gx1,
+                y1: gy1,
+                x2: gx2,
+                y2: gy2
+            });
+
+            // ====== 获取三个向量 ======
+
+            const vectors = Object.fromEntries(
+                ['e1', 'e2', 'v'].map(name => {
+                    const group = $('ev-' + name);
+
+                    return [
+                        name,
+                        {
+                            line: group.querySelector('line'),
+                            tip: group.querySelector('polygon'),
+                            label: group.querySelector('text')
+                        }
+                    ];
+                })
+            );
+
+            // ====== 绘制向量 ======
+
+            function drawVector(name, x, y, label) {
+                const v = vectors[name];
+
+                const [px, py] = xy(x, y);
+
+                const dx = px - O.x;
+                const dy = py - O.y;
+
+                const len = Math.hypot(dx, dy) || 1;
+
+                const ux = dx / len;
+                const uy = dy / len;
+
+                const bx = px - ux * 13;
+                const by = py - uy * 13;
+
+                attrs(v.line, {
+                    x1: O.x,
+                    y1: O.y,
+                    x2: px - ux * 4,
+                    y2: py - uy * 4
+                });
+
+                // 箭头
+                v.tip.setAttribute(
+                    'points',
+                    `${px},${py} ` +
+                    `${bx - uy * 5},${by + ux * 5} ` +
+                    `${bx + uy * 5},${by - ux * 5}`
+                );
+
+                // 分别布置标签，避免重叠
+                if (name === 'e1') {
+                    attrs(v.label, {
+                        x: px + 12,
+                        y: py + 5,
+                        'text-anchor': 'start'
+                    });
+
+                } else if (name === 'e2') {
+                    attrs(v.label, {
+                        x: px - 9,
+                        y: py - 12,
+                        'text-anchor': 'end'
+                    });
+
+                } else {
+                    attrs(v.label, {
+                        x: px - 8,
+                        y: py - 14,
+                        'text-anchor': 'end'
+                    });
+                }
+
+                v.label.textContent = label;
+            }
+
+            // ====== 数学变换 ======
+
+            /*
+              A = [ 1   0.5 ]
+                  [ 0.5 1   ]
+          
+              e1 = (1,0)
+              Ae1 = (1,0.5)
+          
+              e2 = (0,1)
+              Ae2 = (0.5,1)
+          
+              特征向量：
+          
+              v = (1,1) = e1+e2
+          
+              Av = (1.5,1.5) = 1.5v
+          
+              特征值 lambda = 1.5
+          
+              使用连续变换：
+          
+              A(t) = (1-t)I + tA
+          
+                   = [ 1     0.5t ]
+                     [ 0.5t  1    ]
+          
+              t=0 表示未变换
+              t=1 表示完整的 A 变换
+            */
+
+            let t = 1;
+            let frame = null;
+
+            function draw() {
+
+                // 第一个基向量发生倾斜
+                const e1 = [
+                    1,
+                    0.5 * t
+                ];
+
+                // 第二个基向量发生倾斜
+                const e2 = [
+                    0.5 * t,
+                    1
+                ];
+
+                // 特征向量始终是二者之和
+                const v = [
+                    e1[0] + e2[0],
+                    e1[1] + e2[1]
+                ];
+
+                // 变化后的基向量构成平行四边形
+                polygon(
+                    $('ev-area'),
+                    [
+                        [0, 0],
+                        e1,
+                        v,
+                        e2
+                    ]
+                );
+
+                const atStart = t < 0.0001;
+                const atEnd = t > 0.9999;
+
+                // 橙色基向量
+                drawVector(
+                    'e1',
+                    ...e1,
+                    atStart
+                        ? 'e₁'
+                        : atEnd
+                            ? 'Ae₁'
+                            : 'A(t)e₁'
+                );
+
+                // 紫色基向量
+                drawVector(
+                    'e2',
+                    ...e2,
+                    atStart
+                        ? 'e₂'
+                        : atEnd
+                            ? 'Ae₂'
+                            : 'A(t)e₂'
+                );
+
+                // 蓝色特征向量
+                drawVector(
+                    'v',
+                    ...v,
+                    atStart
+                        ? 'v = (1, 1)'
+                        : atEnd
+                            ? 'Av = 1.5v'
+                            : 'A(t)v'
+                );
+            }
+
+            // ====== 动画 ======
+
+            function stop() {
+                if (frame !== null) {
+                    cancelAnimationFrame(frame);
+                }
+
+                frame = null;
+            }
+
+            function play() {
+                stop();
+
+                t = 0;
+                draw();
+
+                const reduceMotion = matchMedia(
+                    '(prefers-reduced-motion: reduce)'
+                ).matches;
+
+                if (reduceMotion) {
+                    t = 1;
+                    draw();
+                    return;
+                }
+
+                const duration = 2200;
+                const start = performance.now();
+
+                function tick(now) {
+                    const u = Math.min(
+                        (now - start) / duration,
+                        1
+                    );
+
+                    // 缓入缓出
+                    t = u < 0.5
+                        ? 4 * u ** 3
+                        : 1 - (-2 * u + 2) ** 3 / 2;
+
+                    draw();
+
+                    if (u < 1) {
+                        frame = requestAnimationFrame(tick);
+                    } else {
+                        frame = null;
+                    }
+                }
+
+                frame = requestAnimationFrame(tick);
+            }
+
+            function reset() {
+                stop();
+                t = 0;
+                draw();
+            }
+
+            $('ev-play').addEventListener('click', play);
+            $('ev-reset').addEventListener('click', reset);
+
+            // ====== 桌面端 / 移动端适配 ======
+
+            const mobile = matchMedia(
+                '(max-width: 540px)'
+            );
+
+            function fit() {
+                svg.setAttribute(
+                    'viewBox',
+                    mobile.matches
+                        ? '105 0 510 386'
+                        : '0 0 720 386'
+                );
+            }
+
+            mobile.addEventListener('change', fit);
+
+            fit();
+
+            // 初始展示变换后的状态
+            draw();
+
+        })();
+    </script>
+
+</body>
+
+</html>

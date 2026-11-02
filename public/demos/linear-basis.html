@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>线性变换可视化</title>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .lbv {
+      --fg: #29364d;
+      --muted: #77869a;
+      --grid: #e7edf5;
+      --axis: #96a4b7;
+      --border: #dfe6f0;
+      --orange: #dc7130;
+      --purple: #825bd2;
+      --blue: #3278c8;
+
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background: transparent;
+      color: var(--fg);
+      font-family: system-ui, -apple-system,
+        "PingFang SC", sans-serif;
+    }
+
+    .lbv * {
+      box-sizing: border-box;
+    }
+
+    .lbv svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .lbv .grid-line {
+      stroke: var(--grid);
+      stroke-width: 1;
+    }
+
+    .lbv .axis {
+      stroke: var(--axis);
+      stroke-width: 1.5;
+    }
+
+    .lbv .axis-arrow {
+      fill: var(--axis);
+    }
+
+    .lbv .tick {
+      fill: var(--muted);
+      font: 12px system-ui, sans-serif;
+    }
+
+    .lbv .rectangle {
+      fill: var(--blue);
+      fill-opacity: .15;
+      stroke: var(--blue);
+      stroke-opacity: .3;
+      stroke-width: 1.5;
+      stroke-dasharray: 5 5;
+      stroke-linejoin: round;
+    }
+
+    .lbv .vector {
+      color: var(--blue);
+    }
+
+    .lbv .vector.orange {
+      color: var(--orange);
+    }
+
+    .lbv .vector.purple {
+      color: var(--purple);
+    }
+
+    .lbv .vector line {
+      stroke: currentColor;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .lbv .vector polygon {
+      fill: currentColor;
+    }
+
+    .lbv .vector text {
+      fill: currentColor;
+      font: 700 16px system-ui, sans-serif;
+    }
+
+    .lbv .origin {
+      fill: var(--fg);
+    }
+
+    .lbv .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .lbv button {
+      appearance: none;
+      font: 600 14px system-ui, sans-serif;
+      line-height: 1.4;
+      padding: 8px 22px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+
+    .lbv button:hover {
+      opacity: .8;
+    }
+
+    .lbv button:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .lbv .play {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    .lbv .reset {
+      background: transparent;
+      color: var(--fg);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .lbv {
+        --fg: #e9eff8;
+        --muted: #a6b2c3;
+        --grid: #303b4c;
+        --axis: #71829b;
+        --border: #37455a;
+        --orange: #ffac76;
+        --purple: #bf9fff;
+        --blue: #81b8ff;
+      }
+
+      .lbv .play {
+        color: #172335;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .lbv button {
+        padding: 7px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="lbv" id="linear-basis-demo">
+
+    <!-- 坐标系 -->
+    <svg id="lbv-svg" viewBox="36 0 720 408" role="img" aria-label="线性变换可视化">
+      <g id="lbv-grid"></g>
+      <g id="lbv-axes"></g>
+
+      <!-- 浅色矩形 -->
+      <polygon id="lbv-rectangle" class="rectangle" />
+
+      <!-- 2p1 -->
+      <g class="vector orange" id="lbv-a">
+        <line />
+        <polygon />
+        <text>2p₁</text>
+      </g>
+
+      <!-- 3p2 -->
+      <g class="vector purple" id="lbv-b">
+        <line />
+        <polygon />
+        <text>3p₂</text>
+      </g>
+
+      <!-- 合向量 -->
+      <g class="vector" id="lbv-sum">
+        <line />
+        <polygon />
+        <text>Py = (−1, 5)</text>
+      </g>
+
+      <circle cx="396" cy="344" r="3.2" class="origin" />
+
+      <text x="382" y="363" class="tick" text-anchor="end">O</text>
+
+    </svg>
+
+    <div class="controls">
+      <button type="button" class="play" id="lbv-play">
+        ▶ 播放
+      </button>
+      <button type="button" class="reset" id="lbv-reset">
+        重置
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const NS = 'http://www.w3.org/2000/svg';
+
+      const svg = document.getElementById('lbv-svg');
+      const grid = document.getElementById('lbv-grid');
+      const axes = document.getElementById('lbv-axes');
+      const rectangle =
+        document.getElementById('lbv-rectangle');
+
+      const playButton =
+        document.getElementById('lbv-play');
+
+      const resetButton =
+        document.getElementById('lbv-reset');
+
+      // 数学坐标系原点
+      const O = { x: 396, y: 344 };
+
+      // 每单位长度对应 56 SVG 像素
+      const SCALE = 56;
+
+      function xy(x, y) {
+        return [
+          O.x + x * SCALE,
+          O.y - y * SCALE
+        ];
+      }
+
+      function setAttrs(el, attrs) {
+        for (const [key, value] of Object.entries(attrs)) {
+          el.setAttribute(key, value);
+        }
+      }
+
+      function create(tag, parent, attrs = {}, text = null) {
+        const el = document.createElementNS(NS, tag);
+
+        setAttrs(el, attrs);
+
+        if (text !== null) {
+          el.textContent = text;
+        }
+
+        parent.appendChild(el);
+        return el;
+      }
+
+      // ====== 绘制网格 ======
+
+      for (let x = -5; x <= 5; x++) {
+        const [px] = xy(x, 0);
+
+        create('line', grid, {
+          class: 'grid-line',
+          x1: px,
+          x2: px,
+          y1: 18,
+          y2: 403
+        });
+
+        if (x !== 0) {
+          create('text', axes, {
+            class: 'tick',
+            x: px,
+            y: 362,
+            'text-anchor': 'middle'
+          }, String(x).replace('-', '−'));
+        }
+      }
+
+      for (let y = -1; y <= 5; y++) {
+        const [, py] = xy(0, y);
+
+        create('line', grid, {
+          class: 'grid-line',
+          x1: 105,
+          x2: 685,
+          y1: py,
+          y2: py
+        });
+
+        if (y !== 0) {
+          create('text', axes, {
+            class: 'tick',
+            x: O.x - 14,
+            y: py + 4,
+            'text-anchor': 'end'
+          }, String(y).replace('-', '−'));
+        }
+      }
+
+      // ====== 坐标轴 ======
+
+      const xAxis = create('line', axes, {
+        class: 'axis',
+        x1: 105,
+        y1: O.y,
+        x2: 688,
+        y2: O.y
+      });
+
+      create('line', axes, {
+        class: 'axis',
+        x1: O.x,
+        x2: O.x,
+        y1: 403,
+        y2: 14
+      });
+
+      const xArrow = create('polygon', axes, {
+        class: 'axis-arrow',
+        points: '688,340 696,344 688,348'
+      });
+
+      create('polygon', axes, {
+        class: 'axis-arrow',
+        points: '392,14 396,6 400,14'
+      });
+
+      const xLabel = create('text', axes, {
+        class: 'tick',
+        x: 696,
+        y: 332
+      }, 'x');
+
+      create('text', axes, {
+        class: 'tick',
+        x: 405,
+        y: 17
+      }, 'y');
+
+      // ====== 自适应视图 ======
+
+      const mobile = window.matchMedia(
+        '(max-width: 540px)'
+      );
+
+      function fit() {
+        if (mobile.matches) {
+          // 396 是视图的水平中心
+          // 141 + 510 / 2 = 396
+          svg.setAttribute(
+            'viewBox',
+            '141 0 510 408'
+          );
+
+          setAttrs(xAxis, { x2: 641 });
+          xArrow.setAttribute(
+            'points',
+            '641,340 649,344 641,348'
+          );
+          xLabel.setAttribute('x', '628');
+
+        } else {
+          // 36 + 720 / 2 = 396
+          svg.setAttribute(
+            'viewBox',
+            '36 0 720 408'
+          );
+
+          setAttrs(xAxis, { x2: 688 });
+          xArrow.setAttribute(
+            'points',
+            '688,340 696,344 688,348'
+          );
+          xLabel.setAttribute('x', '696');
+        }
+      }
+
+      mobile.addEventListener('change', fit);
+      fit();
+
+      // ====== 向量 ======
+
+      function vectorElements(id) {
+        const group = document.getElementById(id);
+
+        return {
+          line: group.querySelector('line'),
+          arrow: group.querySelector('polygon'),
+          text: group.querySelector('text')
+        };
+      }
+
+      const vectors = {
+        a: vectorElements('lbv-a'),
+        b: vectorElements('lbv-b'),
+        sum: vectorElements('lbv-sum')
+      };
+
+      function drawVector(key, x, y, label) {
+        const v = vectors[key];
+
+        const [px, py] = xy(x, y);
+
+        const dx = px - O.x;
+        const dy = py - O.y;
+
+        const length = Math.hypot(dx, dy) || 1;
+
+        const ux = dx / length;
+        const uy = dy / length;
+
+        // 箭头底部的位置
+        const bx = px - 13 * ux;
+        const by = py - 13 * uy;
+
+        setAttrs(v.line, {
+          x1: O.x,
+          y1: O.y,
+          x2: px - ux * 4,
+          y2: py - uy * 4
+        });
+
+        v.arrow.setAttribute(
+          'points',
+          `${px},${py} ` +
+          `${bx - uy * 5},${by + ux * 5} ` +
+          `${bx + uy * 5},${by - ux * 5}`
+        );
+
+        // 标签位置
+        if (key === 'b') {
+          setAttrs(v.text, {
+            x: px - 15,
+            y: py - 12,
+            'text-anchor': 'end'
+          });
+        } else {
+          setAttrs(v.text, {
+            x: px + 15,
+            y: py - 12,
+            'text-anchor': 'start'
+          });
+        }
+
+        v.text.textContent = label;
+      }
+
+      // ====== 线性变换 ======
+
+      /*
+        P = [1 -1]
+            [1  1]
+    
+        连续变换矩阵：
+    
+        P(t) = (1-t)I + tP
+    
+             = [1 -t]
+               [t  1]
+    
+        t = 0：
+          2p1 = (2,0)
+          3p2 = (0,3)
+          y = (2,3)
+    
+        t = 1：
+          2p1 = (2,2)
+          3p2 = (-3,3)
+          Py = (-1,5)
+      */
+
+      let t = 1;
+      let frame = null;
+
+      function draw() {
+        const a = [2, 2 * t];
+        const b = [-3 * t, 3];
+
+        const sum = [
+          a[0] + b[0],
+          a[1] + b[1]
+        ];
+
+        // 矩形的四个顶点：
+        // O → a → a+b → b
+        const points = [
+          [0, 0],
+          a,
+          sum,
+          b
+        ];
+
+        rectangle.setAttribute(
+          'points',
+          points
+            .map(([x, y]) => xy(x, y).join(','))
+            .join(' ')
+        );
+
+        drawVector('a', ...a, '2p₁');
+        drawVector('b', ...b, '3p₂');
+
+        let label;
+
+        if (t < 0.0001) {
+          label = 'y = (2, 3)';
+        } else if (t > 0.9999) {
+          label = 'Py = (−1, 5)';
+        } else {
+          label = 'P(t)y';
+        }
+
+        drawVector('sum', ...sum, label);
+      }
+
+      // ====== 动画控制 ======
+
+      function stop() {
+        if (frame !== null) {
+          cancelAnimationFrame(frame);
+          frame = null;
+        }
+      }
+
+      function play() {
+        stop();
+
+        t = 0;
+        draw();
+
+        const reduceMotion = window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches;
+
+        if (reduceMotion) {
+          t = 1;
+          draw();
+          return;
+        }
+
+        const duration = 2200;
+        const start = performance.now();
+
+        function animate(now) {
+          const progress = Math.min(
+            (now - start) / duration,
+            1
+          );
+
+          // 缓入缓出
+          t = progress < 0.5
+            ? 4 * progress ** 3
+            : 1 - (-2 * progress + 2) ** 3 / 2;
+
+          draw();
+
+          if (progress < 1) {
+            frame = requestAnimationFrame(animate);
+          } else {
+            frame = null;
+          }
+        }
+
+        frame = requestAnimationFrame(animate);
+      }
+
+      function reset() {
+        stop();
+        t = 0;
+        draw();
+      }
+
+      playButton.addEventListener('click', play);
+      resetButton.addEventListener('click', reset);
+
+      // 初始状态：显示完整变换结果
+      draw();
+
+    })();
+  </script>
+
+</body>
+
+</html>
