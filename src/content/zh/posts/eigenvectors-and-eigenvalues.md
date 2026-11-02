@@ -373,6 +373,16 @@ $$
 > \underbrace{B}_{\text{新基下的矩阵}} = \underbrace{P^{-1}}_{\text{换回新基}} \underbrace{A}_{\text{执行变换}} \underbrace{P}_{\text{换成原基}}
 > $$
 
+由这个式子可以注意到，
+$$
+\begin{align*}
+|A|&=|P^{-1}||\Lambda||P|\\
+&=|P^{-1}P||\Lambda|\\
+&=|\Lambda|
+\end{align*}
+$$
+所以**矩阵所有的特征值相乘等于矩阵行列式的值**。
+
 ### 3. 矩阵的迹
 
 矩阵的迹其实很简单，就是方阵对角线上的所有元素相加。例如，对于$A=\begin{pmatrix}a & b \\ c & d \end{pmatrix}$，它的迹就是

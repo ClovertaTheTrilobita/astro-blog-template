@@ -375,6 +375,16 @@ $$
 > \underbrace{B}_{\text{Matrix in the new basis}} = \underbrace{P^{-1}}_{\text{Back to the new basis}} \underbrace{A}_{\text{Apply the transformation}} \underbrace{P}_{\text{To the original basis}}
 > $$
 
+From this expression, we can observe that
+$$
+\begin{align*}
+|A|&=|P^{-1}||\Lambda||P|\\
+&=|P^{-1}P||\Lambda|\\
+&=|\Lambda|
+\end{align*}
+$$
+Therefore, **the product of all eigenvalues of a matrix is equal to the determinant of the matrix**.
+
 ### 3. The Trace of a Matrix
 
 The trace of a matrix is simple: add up all the entries on the main diagonal of a square matrix. For example, for $A=\begin{pmatrix}a & b \\ c & d \end{pmatrix}$, its trace is
