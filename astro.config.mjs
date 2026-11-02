@@ -10,6 +10,7 @@ import remarkExcerpt from "./src/plugins/remark-excerpt.mjs";
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite';
 import { unified } from '@astrojs/markdown-remark';
+import remarkCustomHeaderId from 'remark-custom-header-id';
 
 export default defineConfig({
     vite: {
@@ -37,7 +38,7 @@ export default defineConfig({
         },
         processor: unified({
             rehypePlugins: [rehypeImageCaptions, rehypeMermaid, rehypeKatex],
-            remarkPlugins: [remarkMath, remarkExcerpt],
+            remarkPlugins: [remarkMath, remarkExcerpt, remarkCustomHeaderId],
         }),
     },
 })
