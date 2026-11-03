@@ -8,7 +8,6 @@ export default {
   more: 'View more >>>', viewPost: 'Read post >>>', expand: 'Show more', collapse: 'Show less ^', expandComments: 'Show 4 more comments', collapseComments: 'Collapse recent comments', latestLabel: '[Latest]',
   theme: 'Toggle color theme', language: '中文', menu: 'Navigation', rss: 'Subscribe to blog RSS', columnRss: 'Subscribe to series RSS',
   comments: 'Comments', commentPrompt: 'Feel free to leave your thoughts here. 💭💡',
-  subscribe: 'After signing in, click “Subscribe by Email” in the comment box to receive updates by email.',
   noComments: 'No comments yet. Say hello!', commentsFailed: 'Recent comments are temporarily unavailable.', retry: 'Retry', loading: 'Loading comments…',
   commentsUnconfigured: 'The comment service has not been configured.', anonymous: 'Anonymous', reply: 'replied to',
   author: 'Written by', contents: 'Contents', previous: 'Previous', next: 'Next', back: 'Back to archive',

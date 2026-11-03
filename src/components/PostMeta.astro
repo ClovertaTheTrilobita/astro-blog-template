@@ -1,37 +1,31 @@
 ---
 import Icon from './Icon.astro';
 import { formatDate, discussionKey, articleUrl, type Article } from '../lib/content';
+import { commentService } from '../lib/comments';
 const { post } = Astro.props as { post: Article };
-const host = import.meta.env.PUBLIC_REMARK42_HOST;
-const siteId = import.meta.env.PUBLIC_REMARK42_SITE_ID;
+const { host, site } = commentService;
 ---
 <div class="post-meta flex flex-wrap items-center gap-4">
   <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
-  {host && siteId && <a class="comment-count flex items-center gap-1.5" href={`${articleUrl(post)}#comments`} aria-label={post.id.startsWith('zh/') ? '查看评论' : 'View comments'}><Icon name="comment" /><span data-comment-count data-key={discussionKey(post)} data-host={host} data-site={siteId}>—</span></a>}
+  {host && site && <a class="comment-count flex items-center gap-1.5" href={`${articleUrl(post)}#comments`} aria-label={post.id.startsWith('zh/') ? '查看评论' : 'View comments'}><Icon name="comment" /><span data-comment-count data-key={discussionKey(post)} data-host={host} data-site={site}>—</span></a>}
 </div>
 <script>
   let controller: AbortController | undefined;
   async function loadCounts(endpoint: string, nodes: Map<string, HTMLElement[]>, pageSignal: AbortSignal) {
-    // Remark42's own counter batches URL keys through this read-only endpoint.
+    const keys = [...nodes.keys()];
     for (let attempt = 0; attempt < 2 && !pageSignal.aborted; attempt++) {
       try {
         const signal = AbortSignal.any([pageSignal, AbortSignal.timeout(8000)]);
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify([...nodes.keys()]),
-          signal,
-        });
+        const response = await fetch(endpoint + '&page_keys=' + encodeURIComponent(keys.join(',')), { signal });
         if (!response.ok) {
           if (response.status !== 429 && response.status < 500) return;
           throw new Error('Comment counts temporarily unavailable');
         }
-        const counts: { url: string; count: number }[] = await response.json();
-        if (!Array.isArray(counts)) throw new Error('Invalid comment counts');
+        const { data } = await response.json() as { data: Record<string, number> };
         if (pageSignal.aborted) return;
-        for (const { url, count } of counts) {
+        for (const [key, count] of Object.entries(data)) {
           if (!Number.isInteger(count) || count < 0) continue;
-          for (const node of nodes.get(url) ?? []) node.textContent = String(count);
+          for (const node of nodes.get(key) ?? []) node.textContent = String(count);
         }
         return;
       } catch {
@@ -48,12 +42,19 @@ const siteId = import.meta.env.PUBLIC_REMARK42_SITE_ID;
     for (const node of counters) {
       const { host, site, key } = node.dataset;
       if (!host || !site || !key) continue;
-      const endpoint = `${host.replace(/\/$/, '')}/api/v1/counts?site=${encodeURIComponent(site)}`;
+      const endpoint = host + '/api/v2/stats/page_comment?site_name=' + encodeURIComponent(site);
       const nodes = groups.get(endpoint) ?? new Map<string, HTMLElement[]>();
       nodes.set(key, [...nodes.get(key) ?? [], node]);
       groups.set(endpoint, nodes);
     }
-    for (const [endpoint, nodes] of groups) void loadCounts(endpoint, nodes, controller.signal);
+    for (const [endpoint, nodes] of groups) {
+      const entries = [...nodes];
+      // Keep Artalk's query string short on archive pages.
+      const size = 30;
+      for (let offset = 0; offset < entries.length; offset += size) {
+        void loadCounts(endpoint, new Map(entries.slice(offset, offset + size)), controller.signal);
+      }
+    }
   }
   document.addEventListener('astro:page-load', initCounters);
   document.addEventListener('astro:before-swap', () => controller?.abort());

@@ -6,7 +6,7 @@
   - 将网站的标题（Half Price! 半价便当同好会！）、背景文字（HP BEN-TO、Half Price）、导航栏、页脚的声明等非写作内容分别制作i18n的ts文件，供网站的两个版本使用。（首页和其他页面的介绍、关于页面中的介绍等另行规定）
   - 中文和英文的路由分别是`blog.cloverta.top/zh/`和`blog.cloverta.top/en/`
 - 网站的用户创作内容（首页和其他页面的介绍、关于页面中的介绍、博文等）均使用markdown。要区分中文和英文的两个版本。统一放在一个目录中管理，且每个md文件对应的内容需明确。
-- 网站是基于[SanYeCao-blog](https://github.com/ClovertaTheTrilobita/SanYeCao-blog)的重构，本地路径[SanYeCao-blog](~/Projects/SanYeCao-blog)。关于评论区remark42的API等徐遵循原项目，以保持兼容性。
+- 网站是基于[SanYeCao-blog](https://github.com/ClovertaTheTrilobita/SanYeCao-blog)的重构，本地路径[SanYeCao-blog](~/Projects/SanYeCao-blog)。评论区使用 Artalk，继续使用原项目的文章讨论键，使中英文页面共享评论。
 - 尽可能地使用Tailwind等库，保持代码干净，避免重复造轮子。
 
 ## 2. 首页

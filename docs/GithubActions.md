@@ -78,8 +78,8 @@ cat ~/.ssh/github_actions_deploy
 如果你已经设置好`.env`，它里面应该有如下内容
 
 ```env
-PUBLIC_REMARK42_HOST=
-PUBLIC_REMARK42_SITE_ID=
+PUBLIC_ARTALK_HOST=
+PUBLIC_ARTALK_SITE_NAME=
 ```
 
 如果你还没配置好或不知道这些是干什么的，请详见：<b>[EnvVariables.md](EnvVariables.md)</b>

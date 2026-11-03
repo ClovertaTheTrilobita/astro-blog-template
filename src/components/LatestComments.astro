@@ -1,11 +1,13 @@
 ---
 import { getTranslations, type Lang } from '../i18n';
-import { articles, articleUrl } from '../lib/content';
+import { articles, articleUrl, discussionKey } from '../lib/content';
+import { commentService } from '../lib/comments';
 const { lang } = Astro.props as { lang: Lang };
 const t = getTranslations(lang);
-const localPaths = [...await articles(lang), ...await articles(lang, 'seriesPosts')].map(articleUrl);
+const localArticles = [...await articles(lang), ...await articles(lang, 'seriesPosts')];
+const discussions = Object.fromEntries(localArticles.map(post => [discussionKey(post), { url: articleUrl(post), title: post.data.title }]));
 ---
-<section class="latest-comments" data-lang={lang} data-paths={JSON.stringify(localPaths)} data-canonical-origin={Astro.site?.origin} data-host={import.meta.env.PUBLIC_REMARK42_HOST} data-site={import.meta.env.PUBLIC_REMARK42_SITE_ID} data-loading={t.loading} data-empty={t.noComments} data-error={t.commentsFailed} data-unconfigured={t.commentsUnconfigured} data-reply={t.reply} data-anonymous={t.anonymous} data-expand={t.expand} data-collapse={t.collapse} data-expand-comments={t.expandComments} data-collapse-comments={t.collapseComments}>
+<section class="latest-comments" data-lang={lang} data-discussions={JSON.stringify(discussions)} data-canonical-origin={Astro.site?.origin} data-host={commentService.host} data-site={commentService.site} data-loading={t.loading} data-empty={t.noComments} data-error={t.commentsFailed} data-unconfigured={t.commentsUnconfigured} data-reply={t.reply} data-anonymous={t.anonymous} data-expand={t.expand} data-collapse={t.collapse} data-expand-comments={t.expandComments} data-collapse-comments={t.collapseComments}>
   <h2>{t.recentComments}</h2>
   <p class="comments-status muted" role="status">{t.loading}</p>
   <div id="recent-comment-list" class="latest-comments-list" aria-live="polite"></div>
@@ -13,7 +15,15 @@ const localPaths = [...await articles(lang), ...await articles(lang, 'seriesPost
   <button class="comments-more text-button" type="button" aria-controls="recent-comment-list" aria-expanded="false" hidden>{t.expand} ﹀</button>
 </section>
 <script>
-  interface Comment { id: string; pid?: string; title?: string; text?: string; time: string; locator?: { url?: string }; user?: { name?: string; picture?: string; photo?: string; avatar?: string }; }
+  interface Comment {
+    id: number;
+    rid: number;
+    nick: string;
+    date: string;
+    content_marked: string;
+    page_key: string;
+    email_encrypted?: string;
+  }
   let controller: AbortController | undefined;
   function initComments() {
     controller?.abort();
@@ -26,7 +36,8 @@ const localPaths = [...await articles(lang), ...await articles(lang, 'seriesPost
       const more = root.querySelector<HTMLButtonElement>('.comments-more')!;
       const retry = root.querySelector<HTMLButtonElement>('.comments-retry')!;
       const { host, site, lang = 'zh' } = root.dataset;
-      const localPaths = new Set<string>(JSON.parse(root.dataset.paths || '[]'));
+      const discussions = new Map<string, { url: string; title: string }>(Object.entries(JSON.parse(root.dataset.discussions || '{}')));
+      let avatarConfig: Promise<{ base: URL; params: string } | null> | undefined;
       let comments: Comment[] = [];
       let visible = 0;
       let expansions = 0;
@@ -39,35 +50,69 @@ const localPaths = [...await articles(lang), ...await articles(lang, 'seriesPost
         more.setAttribute('aria-label', (collapse ? root!.dataset.collapseComments : root!.dataset.expandComments)!);
         more.setAttribute('aria-expanded', String(expansions > 0));
       }
-      const safeImage = (value: string) => { if (!value.trim()) return ''; try { const url = new URL(value, location.origin); return ['https:', 'http:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } };
-      const discussionUrl = (value = '') => {
-        try {
-          const path = new URL(value, location.origin).pathname;
-          const localizedPath = `/${lang}${path.replace(/^\/(zh|en)(?=\/)/, '').replace(/\/?$/, '/')}`;
-          // Older live discussions can refer to articles not included in this checkout.
-          return localPaths.has(localizedPath) ? `${localizedPath}#comments` : `${root!.dataset.canonicalOrigin}${localizedPath}#comments`;
-        } catch { return `/${lang}/`; }
+      const discussionUrl = (key: string, id: number) => {
+        const article = discussions.get(key);
+        const path = article?.url ?? (
+          /^\/(posts|series)\//.test(key) ? (root.dataset.canonicalOrigin ?? '') + '/' + lang + key : '/' + lang + '/'
+        );
+        return path + '#atk-comment-' + id;
       };
+      async function loadAvatar(avatar: HTMLElement, hash?: string) {
+        if (!host || !hash || !/^(?:[a-f\d]{32}|[a-f\d]{64})$/i.test(hash)) return;
+        avatarConfig ??= (async () => {
+          const signal = AbortSignal.any([pageSignal, AbortSignal.timeout(5000)]);
+          const response = await fetch(`${host}/api/v2/conf`, { credentials: 'omit', signal });
+          if (!response.ok) return null;
+          const { frontend_conf } = await response.json() as {
+            frontend_conf?: { gravatar?: { mirror?: string; params?: string } };
+          };
+          const { mirror, params } = frontend_conf?.gravatar ?? {};
+          const base = new URL(mirror || 'https://www.gravatar.com/avatar/', host);
+          if (!['https:', 'http:'].includes(base.protocol)) return null;
+          return { base, params: params ?? 'sha256=1&d=mp&s=240' };
+        })().catch(() => null);
+        const config = await avatarConfig;
+        if (!config || pageSignal.aborted || !avatar.isConnected) return;
+
+        const url = new URL(config.base);
+        url.pathname = url.pathname.replace(/\/+$/, '') + '/' + hash;
+        url.search = config.params;
+        const image = new Image();
+        image.alt = '';
+        image.decoding = 'async';
+        image.referrerPolicy = 'no-referrer';
+        image.addEventListener('load', () => {
+          if (avatar.isConnected) avatar.replaceChildren(image);
+        }, { once: true, signal: pageSignal });
+        image.src = url.href;
+      }
       function appendBatch(count: number) {
         const end = Math.min(visible + count, comments.length);
-        const names = new Map(comments.map(comment => [comment.id, comment.user?.name]));
+        const names = new Map(comments.map(comment => [comment.id, comment.nick]));
         for (const item of comments.slice(visible, end)) {
           const card = document.createElement('article'); card.className = 'comment-card';
           const avatar = document.createElement('span'); avatar.className = 'comment-avatar';
-          const name = item.user?.name || root!.dataset.anonymous!;
-          const picture = safeImage(item.user?.picture || item.user?.photo || item.user?.avatar || '');
-          if (picture) { const img = document.createElement('img'); img.src = picture; img.alt = ''; img.loading = 'lazy'; avatar.append(img); }
-          else avatar.textContent = name.slice(0, 1).toUpperCase();
+          const name = item.nick || root!.dataset.anonymous!;
+          avatar.textContent = name.slice(0, 1).toUpperCase();
+          void loadAvatar(avatar, item.email_encrypted);
           const body = document.createElement('div'); body.className = 'comment-body';
           const meta = document.createElement('div'); meta.className = 'comment-byline';
           const author = document.createElement('span'); author.textContent = name; meta.append(author);
-          if (item.pid && names.get(item.pid)) { const reply = document.createElement('span'); reply.textContent = `${root!.dataset.reply} ${names.get(item.pid)}`; meta.append(reply); }
-          const date = document.createElement('time'); const parsedDate = new Date(item.time);
-          if (!Number.isNaN(parsedDate.valueOf())) { date.dateTime = parsedDate.toISOString(); date.textContent = parsedDate.toISOString().slice(0, 10); meta.append(date); }
+          if (item.rid && names.get(item.rid)) { const reply = document.createElement('span'); reply.textContent = `${root!.dataset.reply} ${names.get(item.rid)}`; meta.append(reply); }
+          const date = document.createElement('time');
+          if (/^\d{4}-\d{2}-\d{2}[ T]/.test(item.date)) {
+            date.dateTime = item.date.replace(' ', 'T');
+            date.textContent = item.date.slice(0, 10);
+            meta.append(date);
+          }
           const text = document.createElement('p');
-          const parsed = new DOMParser().parseFromString(item.text || '', 'text/html');
-          text.textContent = parsed.body.textContent?.trim() || (lang === 'zh' ? '[图片]' : '[Image]');
-          const link = document.createElement('a'); link.className = 'comment-source'; link.href = discussionUrl(item.locator?.url); link.textContent = item.title || (lang === 'zh' ? '查看讨论' : 'View discussion');
+          const parsed = document.createElement('template');
+          parsed.innerHTML = item.content_marked || '';
+          text.textContent = parsed.content.textContent?.trim() || (lang === 'zh' ? '[图片]' : '[Image]');
+          const link = document.createElement('a');
+          link.className = 'comment-source';
+          link.href = discussionUrl(item.page_key, item.id);
+          link.textContent = discussions.get(item.page_key)?.title ?? (lang === 'zh' ? '查看讨论' : 'View discussion');
           body.append(meta, text, link); card.append(avatar, body); list.append(card);
         }
         visible = end;
@@ -89,9 +134,11 @@ const localPaths = [...await articles(lang), ...await articles(lang, 'seriesPost
         status.textContent = root!.dataset.loading!;
         if (!host || !site) { status.textContent = root!.dataset.unconfigured!; return; }
         try {
-          const response = await fetch(`${host}/api/v1/last/100?site=${encodeURIComponent(site)}`, { credentials: 'omit', signal: AbortSignal.any([pageSignal, AbortSignal.timeout(12000)]) });
+          const response = await fetch(`${host}/api/v2/stats/latest_comments?site_name=${encodeURIComponent(site)}&limit=100`, { credentials: 'omit', signal: AbortSignal.any([pageSignal, AbortSignal.timeout(12000)]) });
           if (!response.ok) throw new Error('Comment service unavailable');
-          const data = await response.json(); comments = Array.isArray(data) ? data : data.comments ?? [];
+          const { data } = await response.json() as { data: Comment[] };
+          if (!Array.isArray(data)) throw new Error('Invalid recent comments');
+          comments = data;
           list.replaceChildren(); visible = 0; expansions = 0;
           if (!comments.length) { status.textContent = root!.dataset.empty!; return; }
           status.hidden = true; appendBatch(initialCount);

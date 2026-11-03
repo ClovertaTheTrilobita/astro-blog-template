@@ -2,19 +2,13 @@
 
 <p align="right">[<a href="EnvVariables.md">中文</a> | <a href="EnvVariables-en.md">English</a>]</p>
 
-The following environment variables are listed in the project's `.env.example` file:
+Copy `.env.example` to `.env` and set both variables. For GitHub Actions deployments, set the same variables in `ENV_FILE`.
 
-| Variable Name             | Description                              |
-| ------------------------- | ---------------------------------------- |
-| `PUBLIC_REMARK42_HOST`    | The domain of the server hosting `Remark42` |
-| `PUBLIC_REMARK42_SITE_ID` | Your custom `Remark42` site ID           |
+| Variable | Description |
+| --- | --- |
+| `PUBLIC_ARTALK_HOST` | The public URL of the Artalk server, such as `https://artalk.example.com` |
+| `PUBLIC_ARTALK_SITE_NAME` | The site name in Artalk, such as `cloverta-blog` |
 
-### 1. `PUBLIC_REMARK42_HOST`
+Add the blog's origin to Artalk's trusted domains. Articles use `/posts/…/` and `/series/…/` as discussion keys, shared across languages.
 
-For example, if you deployed the `Remark42` Docker container on a server at `192.168.1.1` and pointed your DNS record to it, then fill in the resolved domain name (such as `https://comments.example.com`) in this field.
-
-Do not add a trailing slash `/` at the end of the URL.
-
-### 2. `PUBLIC_REMARK42_SITE_ID`
-
-This is your custom site ID. For example, if you defined `SITE=sanyecao-blog` in your `Remark42` `docker-compose.yaml`, then you should also fill in `sanyecao-blog` in this field.
+If you connect a local preview to this Artalk server, add its exact origin, such as `http://localhost:4321`, to Artalk's `trusted_domains`. Match the scheme, hostname, and port in the browser. Restart Artalk after editing `data/artalk.yml` on the server.

@@ -31,7 +31,6 @@ export default {
   columnRss: '订阅栏目 RSS',
   comments: '评论区',
   commentPrompt: '欢迎在这里留下你的想法。💭💡',
-  subscribe: '你可以在登录评论区后，点击文本框右下角的「Subscribe by Email」以通过邮件接收最新的互动通知。',
   noComments: '还没有评论，期待与你交流。',
   commentsFailed: '最近评论暂时无法加载。',
   retry: '重试', loading: '评论加载中…',

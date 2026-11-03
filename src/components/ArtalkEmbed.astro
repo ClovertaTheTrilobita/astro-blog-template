@@ -1,0 +1,58 @@
+---
+import { getTranslations, type Lang } from '../i18n';
+import { commentService } from '../lib/comments';
+
+interface Props { pageKey: string; pageTitle: string; lang: Lang; }
+const { pageKey, pageTitle, lang } = Astro.props;
+const t = getTranslations(lang);
+const { host, site } = commentService;
+---
+{host && site ? <div data-artalk-root data-host={host} data-site={site}
+  data-page-key={pageKey} data-page-title={pageTitle} data-locale={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <p data-artalk-status role="status" data-error={t.commentsFailed}>{t.loading}</p>
+  <div data-artalk-widget></div>
+</div> : <p role="status">{t.commentsUnconfigured}</p>}
+
+<script>
+  import 'artalk/Artalk.css';
+  import { artalkMath } from '../lib/artalk-math';
+
+  let cleanup: (() => void) | undefined;
+
+  async function mountArtalk() {
+    cleanup?.();
+    const root = document.querySelector<HTMLElement>('[data-artalk-root]');
+    const widget = root?.querySelector<HTMLElement>('[data-artalk-widget]');
+    const status = root?.querySelector<HTMLElement>('[data-artalk-status]');
+    if (!root || !widget || !status) return;
+
+    const { host, site, pageKey, pageTitle, locale } = root.dataset;
+    let active = true;
+    cleanup = () => { active = false; };
+    try {
+      const { default: Artalk } = await import('artalk');
+      if (!active || !root.isConnected) return;
+
+      Artalk.use(artalkMath);
+      const isDark = () => document.documentElement.classList.contains('dark');
+      const instance = Artalk.init({
+        el: widget, server: host, site, pageKey, pageTitle,
+        locale: locale === 'zh-CN' ? 'zh-CN' : 'en',
+        darkMode: isDark(), pvAdd: false,
+      });
+      instance.on('mounted', () => { status.hidden = true; });
+      const theme = new MutationObserver(() => instance.setDarkMode(isDark()));
+      theme.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      cleanup = () => {
+        active = false;
+        theme.disconnect();
+        instance.destroy();
+      };
+    } catch {
+      if (active) status.textContent = status.dataset.error ?? '';
+    }
+  }
+
+  document.addEventListener('astro:page-load', mountArtalk);
+  document.addEventListener('astro:before-swap', () => cleanup?.());
+</script>
