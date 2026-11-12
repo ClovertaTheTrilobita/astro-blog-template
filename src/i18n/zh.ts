@@ -27,6 +27,7 @@ export default {
   theme: '切换深浅色模式',
   language: 'EN',
   menu: '导航菜单',
+  menuToggle: '菜单',
   rss: '订阅博文 RSS',
   columnRss: '订阅栏目 RSS',
   comments: '评论区',
