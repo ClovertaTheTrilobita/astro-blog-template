@@ -63,7 +63,7 @@ const t = getTranslations(lang);
         nav.inert = mobile.matches && collapsed;
       };
 
-      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-expanded', 'true');
       updateInteractivity();
       toggle.addEventListener('click', () => {
         const expanded = toggle.getAttribute('aria-expanded') === 'true';
