@@ -24,7 +24,7 @@ const isColumn = post.collection === 'seriesPosts';
 const summary = await articleSummary(post);
 const siblings = (await articles(lang, post.collection)).filter(item => !isColumn || item.id.split('/')[2] === post.id.split('/')[2]);
 const index = siblings.findIndex(item => item.id === post.id);
-const previous = siblings[index - 1]; const next = siblings[index + 1];
+const previous = siblings[index + 1]; const next = siblings[index - 1];
 const otherLang = lang === 'zh' ? 'en' : 'zh';
 const translated = (await articles(otherLang, post.collection)).find(item => articleSlug(item) === articleSlug(post));
 const alternate = translated ? articleUrl(translated) : `/${otherLang}/${isColumn ? 'series' : 'archive'}/`;
