@@ -212,6 +212,28 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
     </div>
     <ImagePreview lang={lang} />
     <script>
+      const activeNavIndex = (page: Document) =>
+        Array.from(page.querySelectorAll("#site-navigation .nav-link"))
+          .findIndex((link) => link.getAttribute("aria-current") === "page");
+
+      document.addEventListener("astro:before-preparation", (event) => {
+        const load = event.loader;
+        event.loader = async () => {
+          await load();
+          if (
+            event.signal.aborted ||
+            event.defaultPrevented ||
+            document.documentElement.lang !== event.newDocument.documentElement.lang
+          ) return;
+
+          const from = activeNavIndex(document);
+          const to = activeNavIndex(event.newDocument);
+          if (from < 0 || to < 0 || from === to) return;
+
+          event.direction = to > from ? "nav-next" : "nav-previous";
+        };
+      });
+
       let avatarController: AbortController | undefined;
       let resetAvatar: (() => void) | undefined;
       function initAvatarWelcome() {
@@ -426,17 +448,45 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
         updateButton();
       };
       document.addEventListener("astro:after-swap", applyTheme);
+      let themeTransition: ViewTransition | undefined;
+      const toggleTheme = () => {
+        if (themeTransition) return;
+
+        const root = document.documentElement;
+        const dark = !root.classList.contains("dark");
+        const theme = dark ? "dark" : "light";
+        const updateTheme = () => {
+          root.classList.toggle("dark", dark);
+          try {
+            localStorage.setItem("theme", theme);
+          } catch {}
+          updateButton();
+        };
+
+        if (
+          !document.startViewTransition ||
+          matchMedia("(prefers-reduced-motion: reduce)").matches ||
+          root.hasAttribute("data-astro-transition")
+        ) {
+          updateTheme();
+          return;
+        }
+
+        root.dataset.themeTransition = theme;
+        themeTransition = document.startViewTransition(updateTheme);
+        // Navigation or a viewport resize can skip the animation.
+        void themeTransition.ready.catch(() => {});
+        const clearThemeTransition = () => {
+          delete root.dataset.themeTransition;
+          themeTransition = undefined;
+        };
+        void themeTransition.finished.then(clearThemeTransition, clearThemeTransition);
+      };
       document.addEventListener("astro:page-load", () => {
         updateButton();
         document
           .querySelector("#theme-toggle")
-          ?.addEventListener("click", () => {
-            const dark = document.documentElement.classList.toggle("dark");
-            try {
-              localStorage.setItem("theme", dark ? "dark" : "light");
-            } catch {}
-            updateButton();
-          });
+          ?.addEventListener("click", toggleTheme);
       });
       matchMedia("(prefers-color-scheme: dark)").addEventListener(
         "change",
