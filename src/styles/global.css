@@ -1146,7 +1146,7 @@ html:has(.article-toc) body {
 }
 
 .prose :is(h4, h5) {
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .prose h5 {
