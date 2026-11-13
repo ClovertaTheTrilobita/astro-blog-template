@@ -316,6 +316,73 @@ h3 {
   position: relative;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  [data-astro-transition="nav-next"] {
+    --page-slide-offset: min(3vw, 32px);
+  }
+
+  [data-astro-transition="nav-previous"] {
+    --page-slide-offset: max(-3vw, -32px);
+  }
+
+  :is([data-astro-transition="nav-next"], [data-astro-transition="nav-previous"]) {
+    --page-enter-animation:
+      nav-page-enter 600ms cubic-bezier(.13, .39, .34, 1) both,
+      nav-page-fade-in 540ms cubic-bezier(.24, .42, .42, 1) both;
+
+    &::view-transition-group(page-content),
+    &::view-transition-old(page-content) {
+      animation: none;
+    }
+
+    &::view-transition-old(page-content) {
+      opacity: 0;
+    }
+
+    &::view-transition-new(page-content) {
+      animation: var(--page-enter-animation);
+    }
+
+    /* Capture titles and images as part of the main content between sections. */
+    & #main-content [data-astro-transition-scope] {
+      view-transition-name: none;
+    }
+
+    &[data-astro-transition-fallback="new"] #main-content {
+      animation: var(--page-enter-animation);
+    }
+
+    &[data-astro-transition-fallback="old"] #main-content,
+    &[data-astro-transition-fallback] #main-content [data-astro-transition-scope] {
+      animation: none;
+    }
+
+    &[data-astro-transition-fallback="old"] #main-content {
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes nav-page-enter {
+  from {
+    transform: translateX(var(--page-slide-offset));
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes nav-page-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .sidebar {
   padding-top: 22px;
   position: sticky;

@@ -209,6 +209,28 @@ const displayFontUrl = `https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+Hu
     </div>
     <ImagePreview lang={lang} />
     <script>
+      const activeNavIndex = (page: Document) =>
+        Array.from(page.querySelectorAll("#site-navigation .nav-link"))
+          .findIndex((link) => link.getAttribute("aria-current") === "page");
+
+      document.addEventListener("astro:before-preparation", (event) => {
+        const load = event.loader;
+        event.loader = async () => {
+          await load();
+          if (
+            event.signal.aborted ||
+            event.defaultPrevented ||
+            document.documentElement.lang !== event.newDocument.documentElement.lang
+          ) return;
+
+          const from = activeNavIndex(document);
+          const to = activeNavIndex(event.newDocument);
+          if (from < 0 || to < 0 || from === to) return;
+
+          event.direction = to > from ? "nav-next" : "nav-previous";
+        };
+      });
+
       let avatarController: AbortController | undefined;
       let resetAvatar: (() => void) | undefined;
       function initAvatarWelcome() {
