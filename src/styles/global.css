@@ -206,6 +206,7 @@ h3 {
 }
 
 :root[data-theme-transition]:not([data-astro-transition]) {
+
   /* Capture the entire viewport together, including named navigation elements. */
   & [data-astro-transition-scope] {
     view-transition-name: none;
@@ -224,22 +225,38 @@ h3 {
 
   &[data-theme-transition="dark"]::view-transition-new(root),
   &[data-theme-transition="light"]::view-transition-old(root) {
+    --curtain-start: 100%;
+    --curtain-end: 0%;
+    --curtain-midpoint-offset: 1%;
     z-index: 1;
-    animation: theme-curtain 420ms cubic-bezier(.4, 0, .2, 1) both;
+    animation: theme-curtain 450ms linear both;
   }
 
   &[data-theme-transition="light"]::view-transition-old(root) {
-    animation-direction: reverse;
+    --curtain-start: 0%;
+    --curtain-end: 100%;
+    --curtain-midpoint-offset: -1%;
   }
 }
 
 @keyframes theme-curtain {
   from {
-    clip-path: inset(0 0 100% 0);
+    clip-path: inset(0 0 var(--curtain-start) 0);
+    animation-timing-function: cubic-bezier(.22, .12, .45, .92);
+  }
+
+  /* The curtain moves only 2% of the viewport during the 50ms hand change. */
+  57% {
+    clip-path: inset(0 0 calc(50% + var(--curtain-midpoint-offset)) 0);
+  }
+
+  66% {
+    clip-path: inset(0 0 calc(50% - var(--curtain-midpoint-offset)) 0);
+    animation-timing-function: cubic-bezier(.55, .08, .78, .88);
   }
 
   to {
-    clip-path: inset(0);
+    clip-path: inset(0 0 var(--curtain-end) 0);
   }
 }
 
@@ -1502,10 +1519,10 @@ html:has(.article-toc) body {
     overscroll-behavior-x: contain;
     scroll-padding-inline: 18px;
     mask-image: linear-gradient(to right,
-      transparent,
-      black var(--menu-fade-start, 0px),
-      black calc(100% - var(--menu-fade-end, 0px)),
-      transparent);
+        transparent,
+        black var(--menu-fade-start, 0px),
+        black calc(100% - var(--menu-fade-end, 0px)),
+        transparent);
   }
 
   .sidebar-navigation[data-menu-animated] nav {
@@ -1557,7 +1574,7 @@ html:has(.article-toc) body {
     justify-items: end;
   }
 
-  .mobile-menu-arrow > span {
+  .mobile-menu-arrow>span {
     grid-area: 1 / 1;
     transition: opacity .2s ease;
   }
