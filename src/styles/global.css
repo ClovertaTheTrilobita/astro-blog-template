@@ -205,6 +205,44 @@ h3 {
   display: block;
 }
 
+:root[data-theme-transition]:not([data-astro-transition]) {
+  /* Capture the entire viewport together, including named navigation elements. */
+  & [data-astro-transition-scope] {
+    view-transition-name: none;
+  }
+
+  &::view-transition {
+    pointer-events: none;
+  }
+
+  &::view-transition-group(root),
+  &::view-transition-old(root),
+  &::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  &[data-theme-transition="dark"]::view-transition-new(root),
+  &[data-theme-transition="light"]::view-transition-old(root) {
+    z-index: 1;
+    animation: theme-curtain 420ms cubic-bezier(.4, 0, .2, 1) both;
+  }
+
+  &[data-theme-transition="light"]::view-transition-old(root) {
+    animation-direction: reverse;
+  }
+}
+
+@keyframes theme-curtain {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  to {
+    clip-path: inset(0);
+  }
+}
+
 .language-switch {
   color: var(--ink);
   font-size: 18px;
