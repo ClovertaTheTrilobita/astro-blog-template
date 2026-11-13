@@ -7,6 +7,7 @@ export default {
   latest: 'Latest posts', columnUpdates: 'Series updates', latestUpdates: 'Latest updates', recentComments: 'Recent comments',
   more: 'View more >>>', viewPost: 'Read post >>>', expand: 'Show more', collapse: 'Show less ^', expandComments: 'Show 4 more comments', collapseComments: 'Collapse recent comments', latestLabel: '[Latest]',
   theme: 'Toggle color theme', language: '中文', menu: 'Navigation', rss: 'Subscribe to blog RSS', columnRss: 'Subscribe to series RSS',
+  menuToggle: 'Menu',
   comments: 'Comments', commentPrompt: 'Feel free to leave your thoughts here. 💭💡',
   noComments: 'No comments yet. Say hello!', commentsFailed: 'Recent comments are temporarily unavailable.', retry: 'Retry', loading: 'Loading comments…',
   commentsUnconfigured: 'The comment service has not been configured.', anonymous: 'Anonymous', reply: 'replied to',
