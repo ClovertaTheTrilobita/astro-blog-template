@@ -1145,6 +1145,14 @@ html:has(.article-toc) body {
   margin: 1.4em 0 .6em;
 }
 
+.prose :is(h4, h5) {
+  font-weight: 700;
+}
+
+.prose h5 {
+  color: var(--muted);
+}
+
 .prose :is(h1, h2, h3, h4) {
   scroll-margin-top: 25px;
 }
