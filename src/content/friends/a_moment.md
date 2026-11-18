@@ -1,6 +1,6 @@
 ---
 name: "A Moment's Rest"
 description: "AMoment 的 Blog"
-url: "https://a-moment096.github.io"
-avatar: "https://a-moment096.github.io/avatar.jpg"
+url: "https://blog.a-moment.top/"
+avatar: "https://files.seeusercontent.com/2026/11/18/kAs3/avatar.webp"
 ---
