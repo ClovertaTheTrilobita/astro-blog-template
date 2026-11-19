@@ -1075,10 +1075,12 @@ html:has(.article-toc) body {
 }
 
 .home-archive nav a sup {
+  display: inline-block;
+  inline-size: 0;
+  white-space: nowrap;
   color: var(--muted);
   font-size: 0.6em;
   line-height: 0;
-  margin-left: 0.15em;
   vertical-align: super;
 }
 
