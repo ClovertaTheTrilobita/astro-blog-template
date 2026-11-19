@@ -210,6 +210,75 @@ const latestColumns = columns(lang)
     const tagCloud = sidebar?.querySelector<HTMLElement>(".home-tag-cloud nav");
     if (!sidebar || !background) return;
 
+    const tagLinks = [...(tagCloud?.querySelectorAll<HTMLAnchorElement>("a") ?? [])];
+    let hoveredTag: HTMLAnchorElement | null = null;
+    const positionTags = () => {
+      if (!tagCloud || !hoveredTag || !hoveredTag.offsetWidth) {
+        for (const tag of tagLinks) {
+          tag.style.removeProperty("--tag-offset");
+          tag.style.removeProperty("--tag-scale");
+        }
+        return;
+      }
+
+      // The offsets describe the original rows even while the links animate.
+      const top = hoveredTag.offsetTop;
+      const bottom = top + hoveredTag.offsetHeight;
+      const row = tagLinks.filter(tag =>
+        tag.offsetTop < bottom && tag.offsetTop + tag.offsetHeight > top,
+      );
+      const index = row.indexOf(hoveredTag);
+      const before = row.slice(0, index);
+      const after = row.slice(index + 1);
+      const gap = 8;
+      const left = hoveredTag.offsetLeft;
+      const width = hoveredTag.offsetWidth;
+      const right = left + width;
+      const rightLimit = Math.max(
+        tagCloud.clientWidth,
+        document.documentElement.clientWidth - tagCloud.getBoundingClientRect().left - gap,
+      );
+      const occupied = (tags: HTMLAnchorElement[]) =>
+        tags.reduce((total, tag) => total + tag.offsetWidth + gap, 0);
+      const leftRoom = Math.max(0, left + 16 - occupied(before));
+      const rightRoom = Math.max(0, rightLimit - right - occupied(after));
+      const growth = Math.min(width * 0.5, leftRoom + rightRoom);
+      const growLeft = Math.min(leftRoom, Math.max(growth / 2, growth - rightRoom));
+      const growRight = growth - growLeft;
+      const shiftTag = (tag: HTMLAnchorElement, offset: number) =>
+        tag.style.setProperty("--tag-offset", `${offset}px`);
+      const offsets = new Map([[hoveredTag, (growRight - growLeft) / 2]]);
+
+      let leftEdge = left - growLeft;
+      for (const tag of before.reverse()) {
+        leftEdge = Math.min(tag.offsetLeft, leftEdge - gap - tag.offsetWidth);
+        offsets.set(tag, leftEdge - tag.offsetLeft);
+      }
+      let rightEdge = right + growRight;
+      for (const tag of after) {
+        const nextLeft = Math.max(tag.offsetLeft, rightEdge + gap);
+        offsets.set(tag, nextLeft - tag.offsetLeft);
+        rightEdge = nextLeft + tag.offsetWidth;
+      }
+      for (const tag of tagLinks) {
+        shiftTag(tag, offsets.get(tag) ?? 0);
+        if (tag !== hoveredTag) tag.style.removeProperty("--tag-scale");
+      }
+      hoveredTag.style.setProperty("--tag-scale", String(1 + growth / width));
+    };
+
+    tagCloud?.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch" || !(event.target instanceof Element)) return;
+      const tag = event.target.closest<HTMLAnchorElement>("a");
+      if (tag === hoveredTag) return;
+      hoveredTag = tag;
+      positionTags();
+    }, { signal });
+    tagCloud?.addEventListener("pointerleave", () => {
+      hoveredTag = null;
+      positionTags();
+    }, { signal });
+
     const sections = [...sidebar.querySelectorAll<HTMLElement>(".home-archive, .home-tag-cloud")];
     const updateVisibility = () => {
       if (signal.aborted) return;
@@ -232,7 +301,7 @@ const latestColumns = columns(lang)
       const width = tagCloud.clientWidth;
       if (!force && width === measuredCloudWidth) return;
       measuredCloudWidth = width;
-      for (const tag of tagCloud.querySelectorAll<HTMLAnchorElement>("a")) {
+      for (const tag of tagLinks) {
         tag.style.removeProperty("font-size");
         const baseSize = parseFloat(getComputedStyle(tag).fontSize);
         let size = baseSize;
@@ -245,22 +314,18 @@ const latestColumns = columns(lang)
     const backgroundObserver = new ResizeObserver(updateVisibility);
     backgroundObserver.observe(background);
 
-    window.addEventListener("resize", () => {
+    const refreshSidebar = (force = false) => {
+      if (signal.aborted) return;
       updateVisibility();
-      fitTags();
-    }, { signal });
-    window.visualViewport?.addEventListener("resize", () => {
-      updateVisibility();
-      fitTags();
-    }, { signal });
-    document.fonts.addEventListener("loadingdone", () => fitTags(true), { signal });
-    document.fonts.ready.then(() => {
-      updateVisibility();
-      fitTags(true);
-    });
+      fitTags(force);
+      positionTags();
+    };
+    window.addEventListener("resize", () => refreshSidebar(), { signal });
+    window.visualViewport?.addEventListener("resize", () => refreshSidebar(), { signal });
+    document.fonts.addEventListener("loadingdone", () => refreshSidebar(true), { signal });
+    document.fonts.ready.then(() => refreshSidebar(true));
     signal.addEventListener("abort", () => backgroundObserver.disconnect(), { once: true });
-    updateVisibility();
-    fitTags(true);
+    refreshSidebar(true);
   }
   document.addEventListener("astro:page-load", initHomeArchive);
   document.addEventListener("astro:before-swap", () => archiveController?.abort());
