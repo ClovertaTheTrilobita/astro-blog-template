@@ -1025,6 +1025,59 @@ html:has(.article-toc) body {
   scroll-behavior: smooth;
 }
 
+.home-archive {
+  position: fixed;
+  top: min(174px, 25dvh);
+  left: calc(50% + 410px);
+  width: min(175px, calc(50vw - 425px));
+  font-size: 15px;
+  z-index: 1;
+}
+
+.home-archive[data-overlap-check] {
+  visibility: hidden;
+}
+
+.home-archive[data-overlapped] {
+  display: none;
+}
+
+.home-archive h2 {
+  color: var(--muted);
+  text-align: right;
+  font-size: 20px;
+  border-bottom: 3px solid var(--red);
+  padding-bottom: 1px;
+  margin-bottom: 8px;
+}
+
+.home-archive h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.home-archive h2 a:hover {
+  font-size: inherit;
+}
+
+.home-archive nav {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.home-archive a {
+  color: var(--ink);
+  line-height: 1.5;
+  transition: color 70ms linear, font-size 120ms ease;
+}
+
+.home-archive a:hover {
+  color: var(--blue);
+  font-size: 1.5em;
+  text-decoration: none;
+}
+
 .article-toc {
   --toc-top: min(174px, 25dvh);
   position: fixed;
@@ -1432,6 +1485,10 @@ html:has(.article-toc) body {
 }
 
 @media (max-width: 1240px) {
+  .home-archive {
+    display: none;
+  }
+
   .article-toc {
     position: static;
     width: 100%;

@@ -17,7 +17,9 @@ import { languagePaths, getTranslations } from "../../i18n";
 export const getStaticPaths = languagePaths;
 const { lang } = Astro.params as { lang: "zh" | "en" };
 const t = getTranslations(lang);
-const posts = (await articles(lang)).slice(0, 6);
+const allPosts = await articles(lang);
+const posts = allPosts.slice(0, 6);
+const archiveYears = [...new Set(allPosts.map((post) => post.data.pubDate.getUTCFullYear()))];
 const entries = await articles(lang, "seriesPosts");
 const latestColumns = columns(lang)
   .map((column) => ({
@@ -32,6 +34,12 @@ const latestColumns = columns(lang)
 ---
 
 <Layout active="home">
+  <aside class="home-archive" data-overlap-check aria-label={t.nav.archive}>
+    <h2><a href={`/${lang}/archive/`}>{t.nav.archive}</a></h2>
+    <nav aria-label={t.nav.archive}>
+      {archiveYears.map((year) => <a href={`/${lang}/archive/#archive-${year}`}>{year}</a>)}
+    </nav>
+  </aside>
   <PageIntro
     lang={lang}
     page="home"
@@ -165,4 +173,39 @@ const latestColumns = columns(lang)
   }
   document.addEventListener("astro:page-load", initPostCardLayout);
   document.addEventListener("astro:before-swap", () => controller?.abort());
+</script>
+
+<script>
+  let archiveController: AbortController | undefined;
+  function initHomeArchive() {
+    archiveController?.abort();
+    archiveController = new AbortController();
+    const { signal } = archiveController;
+    const archive = document.querySelector<HTMLElement>(".home-archive");
+    const background = document.querySelector<HTMLElement>(".background-word");
+    if (!archive || !background) return;
+
+    const updateVisibility = () => {
+      if (signal.aborted) return;
+      const archiveRect = archive.getBoundingClientRect();
+      const backgroundRect = background.getBoundingClientRect();
+      const overlaps = archiveRect.left < backgroundRect.right
+        && archiveRect.right > backgroundRect.left
+        && archiveRect.top < backgroundRect.bottom
+        && archiveRect.bottom > backgroundRect.top;
+      archive.toggleAttribute("data-overlapped", overlaps);
+      archive.removeAttribute("data-overlap-check");
+    };
+    const backgroundObserver = new ResizeObserver(updateVisibility);
+    backgroundObserver.observe(background);
+
+    window.addEventListener("resize", updateVisibility, { signal });
+    window.visualViewport?.addEventListener("resize", updateVisibility, { signal });
+    document.fonts.addEventListener("loadingdone", updateVisibility, { signal });
+    document.fonts.ready.then(updateVisibility);
+    signal.addEventListener("abort", () => backgroundObserver.disconnect(), { once: true });
+    updateVisibility();
+  }
+  document.addEventListener("astro:page-load", initHomeArchive);
+  document.addEventListener("astro:before-swap", () => archiveController?.abort());
 </script>
