@@ -19,7 +19,19 @@ const { lang } = Astro.params as { lang: "zh" | "en" };
 const t = getTranslations(lang);
 const allPosts = await articles(lang);
 const posts = allPosts.slice(0, 6);
-const archiveYears = [...new Set(allPosts.map((post) => post.data.pubDate.getUTCFullYear()))];
+const archiveYearCounts = new Map<number, number>();
+for (const post of allPosts) {
+  const year = post.data.pubDate.getUTCFullYear();
+  archiveYearCounts.set(year, (archiveYearCounts.get(year) ?? 0) + 1);
+}
+const archiveYears = [...archiveYearCounts.keys()];
+const tagCounts = new Map<string, number>();
+for (const post of allPosts) {
+  for (const tag of new Set(post.data.tags)) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+}
+const popularTags = [...tagCounts]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], lang))
+  .slice(0, 8);
 const entries = await articles(lang, "seriesPosts");
 const latestColumns = columns(lang)
   .map((column) => ({
@@ -34,11 +46,23 @@ const latestColumns = columns(lang)
 ---
 
 <Layout active="home">
-  <aside class="home-archive" data-overlap-check aria-label={t.nav.archive}>
-    <h2><a href={`/${lang}/archive/`}>{t.nav.archive}</a></h2>
-    <nav aria-label={t.nav.archive}>
-      {archiveYears.map((year) => <a href={`/${lang}/archive/#archive-${year}`}>{year}</a>)}
-    </nav>
+  <aside class="home-sidebar" data-overlap-check>
+    <section class="home-archive" aria-label={t.nav.archive}>
+      <h2><a href={`/${lang}/archive/`}>{t.nav.archive}</a></h2>
+      <nav aria-label={t.nav.archive}>
+        {archiveYears.map((year) => (
+          <a href={`/${lang}/archive/#archive-${year}`}>
+            <span>{year}</span><sup>{archiveYearCounts.get(year)}</sup>
+          </a>
+        ))}
+      </nav>
+    </section>
+    <section class="home-tag-cloud" aria-label={lang === "zh" ? "标签云" : "Tag cloud"}>
+      <h2><a href={`/${lang}/tags/`}>{lang === "zh" ? "标签云" : "Tag cloud"}</a></h2>
+      <nav aria-label={t.nav.tags}>
+        {popularTags.map(([tag]) => <a href={`/${lang}/tags/${encodeURIComponent(tag)}/`}><span>#{tag}</span></a>)}
+      </nav>
+    </section>
   </aside>
   <PageIntro
     lang={lang}
@@ -181,30 +205,62 @@ const latestColumns = columns(lang)
     archiveController?.abort();
     archiveController = new AbortController();
     const { signal } = archiveController;
-    const archive = document.querySelector<HTMLElement>(".home-archive");
+    const sidebar = document.querySelector<HTMLElement>(".home-sidebar");
     const background = document.querySelector<HTMLElement>(".background-word");
-    if (!archive || !background) return;
+    const tagCloud = sidebar?.querySelector<HTMLElement>(".home-tag-cloud nav");
+    if (!sidebar || !background) return;
 
+    const sections = [...sidebar.querySelectorAll<HTMLElement>(".home-archive, .home-tag-cloud")];
     const updateVisibility = () => {
       if (signal.aborted) return;
-      const archiveRect = archive.getBoundingClientRect();
       const backgroundRect = background.getBoundingClientRect();
-      const overlaps = archiveRect.left < backgroundRect.right
-        && archiveRect.right > backgroundRect.left
-        && archiveRect.top < backgroundRect.bottom
-        && archiveRect.bottom > backgroundRect.top;
-      archive.toggleAttribute("data-overlapped", overlaps);
-      archive.removeAttribute("data-overlap-check");
+      for (const section of sections) {
+        section.removeAttribute("data-overlapped");
+        const rect = section.getBoundingClientRect();
+        const overlaps = rect.left < backgroundRect.right
+          && rect.right > backgroundRect.left
+          && rect.top < backgroundRect.bottom
+          && rect.bottom > backgroundRect.top;
+        section.toggleAttribute("data-overlapped", overlaps);
+      }
+      sidebar.removeAttribute("data-overlap-check");
+    };
+
+    let measuredCloudWidth = -1;
+    const fitTags = (force = false) => {
+      if (!tagCloud) return;
+      const width = tagCloud.clientWidth;
+      if (!force && width === measuredCloudWidth) return;
+      measuredCloudWidth = width;
+      for (const tag of tagCloud.querySelectorAll<HTMLAnchorElement>("a")) {
+        tag.style.removeProperty("font-size");
+        const baseSize = parseFloat(getComputedStyle(tag).fontSize);
+        let size = baseSize;
+        while (tag.clientWidth > 0 && tag.scrollWidth > tag.clientWidth + 1 && size > 1) {
+          size = Math.max(1, size - 0.5);
+          tag.style.fontSize = `${size}px`;
+        }
+      }
     };
     const backgroundObserver = new ResizeObserver(updateVisibility);
     backgroundObserver.observe(background);
 
-    window.addEventListener("resize", updateVisibility, { signal });
-    window.visualViewport?.addEventListener("resize", updateVisibility, { signal });
-    document.fonts.addEventListener("loadingdone", updateVisibility, { signal });
-    document.fonts.ready.then(updateVisibility);
+    window.addEventListener("resize", () => {
+      updateVisibility();
+      fitTags();
+    }, { signal });
+    window.visualViewport?.addEventListener("resize", () => {
+      updateVisibility();
+      fitTags();
+    }, { signal });
+    document.fonts.addEventListener("loadingdone", () => fitTags(true), { signal });
+    document.fonts.ready.then(() => {
+      updateVisibility();
+      fitTags(true);
+    });
     signal.addEventListener("abort", () => backgroundObserver.disconnect(), { once: true });
     updateVisibility();
+    fitTags(true);
   }
   document.addEventListener("astro:page-load", initHomeArchive);
   document.addEventListener("astro:before-swap", () => archiveController?.abort());
