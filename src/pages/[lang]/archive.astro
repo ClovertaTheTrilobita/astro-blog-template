@@ -13,7 +13,7 @@ const years = [...new Set(posts.map(post => post.data.pubDate.getUTCFullYear()))
 <Layout active="archive" title={t.nav.archive}>
   <PageIntro lang={lang} page="archive" />
   <div class="archive-list">
-    {years.map(year => <section class="archive-year"><h2>{year}</h2>{posts.filter(post => post.data.pubDate.getUTCFullYear() === year).map(post => <article class="archive-entry"><h3><a href={articleUrl(post)} transition:name={articleTransition(post, 'title')}>{post.data.title}</a></h3><PostMeta post={post} /></article>)}</section>)}
+    {years.map(year => <section class="archive-year" id={`archive-${year}`}><h2>{year}</h2>{posts.filter(post => post.data.pubDate.getUTCFullYear() === year).map(post => <article class="archive-entry"><h3><a href={articleUrl(post)} transition:name={articleTransition(post, 'title')}>{post.data.title}</a></h3><PostMeta post={post} /></article>)}</section>)}
     {!posts.length && <p>{t.noPosts}</p>}
   </div>
 </Layout>
