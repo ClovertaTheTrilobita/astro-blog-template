@@ -1060,13 +1060,10 @@ html:has(.article-toc) body {
 }
 
 .home-archive nav {
+  --year-hover-scale: 1.2;
   display: grid;
   justify-items: end;
   gap: 8px;
-}
-
-.home-archive nav a {
-  font-size: 18.75px;
 }
 
 .home-archive nav a sup {
@@ -1090,8 +1087,18 @@ html:has(.article-toc) body {
   text-decoration: none;
 }
 
+.home-archive nav a {
+  font-size: 18.75px;
+  transform-origin: top right;
+  transition: color 70ms linear, scale 240ms ease, translate 240ms ease;
+}
+
 .home-archive nav a:hover {
-  font-size: 1.5em;
+  scale: var(--year-hover-scale);
+}
+
+.home-archive nav a:hover ~ a {
+  translate: 0 calc(1lh * (var(--year-hover-scale) - 1));
 }
 
 .home-tag-cloud {
